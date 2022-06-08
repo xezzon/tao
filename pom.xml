@@ -6,14 +6,16 @@
 
     <groupId>indi.xezzon</groupId>
     <artifactId>tao</artifactId>
+    <version>${revision}</version>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>tao-core</module>
+        <module>tao-spring-boot-starter</module>
     </modules>
 
     <properties>
+        <revision>1.0-SNAPSHOT</revision>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--依赖版本-->
@@ -23,6 +25,17 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>indi.xezzon</groupId>
+                <artifactId>tao-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>indi.xezzon</groupId>
+                <artifactId>tao-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <!-- SpringBoot 相关依赖 必须放在最后 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
