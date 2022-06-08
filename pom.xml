@@ -12,6 +12,7 @@
     <modules>
         <module>tao-core</module>
         <module>tao-spring-boot-starter</module>
+        <module>tao-admin</module>
     </modules>
 
     <properties>
