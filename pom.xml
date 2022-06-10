@@ -22,10 +22,12 @@
         <!--依赖版本-->
         <spring-boot.version>2.6.8</spring-boot.version>
         <spring-cloud.version>2021.0.1</spring-cloud.version>
+        <hutool.version>5.8.2</hutool.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--二方库-->
             <dependency>
                 <groupId>indi.xezzon</groupId>
                 <artifactId>tao-core</artifactId>
@@ -35,6 +37,12 @@
                 <groupId>indi.xezzon</groupId>
                 <artifactId>tao-spring-boot-starter</artifactId>
                 <version>${revision}</version>
+            </dependency>
+            <!--工具类-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
             <!-- SpringBoot 相关依赖 必须放在最后 -->
             <dependency>

@@ -13,6 +13,10 @@
     <artifactId>tao-core</artifactId>
 
     <dependencies>
-
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
