@@ -7,7 +7,10 @@ import java.util.Map;
 /**
  * 字典工程 用于存储枚举类字典
  */
-public class DictFactory {
+public final class DictFactory {
+
+  private DictFactory() {
+  }
 
   private static final Map<String, List<IDict>> DICT_MAP = new HashMap<>();
 
