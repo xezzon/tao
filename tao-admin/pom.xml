@@ -8,7 +8,6 @@
     <version>${revision}</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>tao-admin</artifactId>
 
   <properties>
@@ -26,4 +25,10 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+
+    </plugins>
+  </build>
 </project>
