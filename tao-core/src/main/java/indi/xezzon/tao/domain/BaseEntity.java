@@ -1,11 +1,12 @@
 package indi.xezzon.tao.domain;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * 数据库通用实体类
  */
-public class BaseEntity {
+public class BaseEntity implements Serializable {
 
   /**
    * 主键
