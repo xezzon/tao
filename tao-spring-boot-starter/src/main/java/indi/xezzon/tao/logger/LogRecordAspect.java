@@ -7,9 +7,12 @@ import java.time.Instant;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,12 +32,12 @@ public class LogRecordAspect {
     // 操作人
     MDC.put("operator", UserContext.getId());
     // 日志描述
-    // TODO: 解析 SpringEL
     if (!logRecord.catalog().isEmpty()) {
       MDC.put("catalog", logRecord.catalog());
     }
     // 日志详情
-    String logValue = logRecord.value();
+    String logValue = new LogRecordExpressionEvaluator()
+        .evaluate(logRecord.value(), getEvaluationContext(point));
     try {
       // 执行业务
       Object ret = point.proceed();
@@ -51,5 +54,19 @@ public class LogRecordAspect {
       logger.error(logValue, e);
       throw e;
     }
+  }
+
+  /**
+   * 获取日志解析上下文
+   * @return 日志解析上下文 包含方法参数及被切面的对象
+   */
+  public static EvaluationContext getEvaluationContext(ProceedingJoinPoint pjp) {
+    EvaluationContext evaluationContext = new StandardEvaluationContext(pjp.getTarget());
+    String[] parameterNames = ((MethodSignature) pjp.getSignature()).getParameterNames();
+    Object[] args = pjp.getArgs();
+    for (int i = 0, cnt = parameterNames.length; i < cnt; i++) {
+      evaluationContext.setVariable(parameterNames[i], args[i]);
+    }
+    return evaluationContext;
   }
 }
