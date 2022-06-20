@@ -9,6 +9,12 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
 
+  <name>tao</name>
+  <description>软件开发管理平台</description>
+  <scm>
+    <url>https://e.coding.net/xezzo/tao/tao-server.git</url>
+  </scm>
+
   <modules>
     <module>tao-core</module>
     <module>tao-spring-boot-starter</module>
@@ -67,4 +73,12 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>xezzo-tao-central</id>
+      <name>central</name>
+      <url>https://xezzo-maven.pkg.coding.net/repository/tao/central/</url>
+    </repository>
+  </distributionManagement>
 </project>
