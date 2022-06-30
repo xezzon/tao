@@ -1,7 +1,7 @@
 package indi.xezzon.tao.logger;
 
-import indi.xezzon.tao.exception.BaseException;
 import indi.xezzon.tao.context.UserContext;
+import indi.xezzon.tao.exception.BaseException;
 import java.time.Duration;
 import java.time.Instant;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -43,7 +43,7 @@ public class LogRecordAspect {
       Object ret = point.proceed();
       // 花费时间
       Instant endTime = Instant.now();
-      MDC.put("spend (ms)", String.valueOf(Duration.between(startTime, endTime).toMillis()));
+      MDC.put("spend", String.valueOf(Duration.between(startTime, endTime).toMillis()));
       logger.info(logValue);
 
       return ret;
