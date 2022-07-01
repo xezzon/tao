@@ -1,11 +1,13 @@
 package indi.xezzon.tao.dict;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 字典工程 用于存储枚举类字典
+ * @author xezzon
  */
 public final class DictFactory {
 
@@ -21,6 +23,6 @@ public final class DictFactory {
   }
 
   public static List<IDict> get(String tag) {
-    return DICT_MAP.get(tag);
+    return DICT_MAP.getOrDefault(tag, Collections.emptyList());
   }
 }
