@@ -29,4 +29,14 @@ public class CommonQuery {
    * 页容量
    */
   private int pageSize;
+
+  /**
+   * 转换为抽象语法树
+   * @param bst 数据库实体类
+   * @param <I> 抽象语法树的具体实现类
+   * @return 抽象语法树
+   */
+  public <I> I toAst(ICommonQueryAst<I> bst) {
+    return bst.toAst(this);
+  }
 }
