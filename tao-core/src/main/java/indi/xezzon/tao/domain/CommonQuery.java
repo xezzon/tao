@@ -36,11 +36,30 @@ public class CommonQuery {
   private int pageSize;
 
   /**
+   * 字段不存在导致抛出异常
+   * @param field 不存在的字段
+   * @return 表达式不合规的异常
+   */
+  public static UnsupportedOperationException nonexistentField(String field) {
+    return new UnsupportedOperationException("不存在的字段: " + field);
+  }
+
+  /**
+   * 不支持的操作符导致抛出异常
+   * @param operator 不支持的操作符
+   * @return 表达式不合规的异常
+   */
+  public static UnsupportedOperationException unsupportedOperator(String operator) {
+    return new UnsupportedOperationException("不支持的操作符: " + operator);
+  }
+
+  /**
    * 转换为抽象语法树
    * @param bst 数据库实体类
    * @param initQuery 初始查询条件
    * @param <I> 抽象语法树的具体实现类
    * @return 抽象语法树
+   * @throws UnsupportedOperationException 不合规的表达式
    */
   public <I> I toAst(ICommonQueryAst<I> bst, I initQuery) {
     return bst.toAst(this, initQuery);
