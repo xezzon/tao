@@ -1,8 +1,7 @@
 package indi.xezzon.tao.domain;
 
 /**
- * 通用查询组件
- * 参考 OData 规范
+ * 通用查询组件 参考 OData 规范
  * @author xezzon
  */
 public class CommonQuery {
@@ -18,8 +17,7 @@ public class CommonQuery {
   private String sort;
   /**
    * 过滤表达式 <br/>
-   * 结构为 (field1 op value1 OR field2 op value2) AND field3 op value31,value32<br/>
-   * op 支持 eq(等于), nq(不等于), in(在某范围内,支持枚举、数值、日期时间), out(不在某范围内,支持枚举、数值、日期时间), gt(大于,支持数值、日期时间), lt(小于,支持数值、日期时间), ge(大于等于,支持数值、日期时间), le(小于等于,支持数值、日期时间)
+   * 结构为 (field1 op value1 OR field2 op value2) AND field3 op value31,value32
    */
   private String filter;
   /**
@@ -34,6 +32,14 @@ public class CommonQuery {
    * 页容量
    */
   private int pageSize;
+
+  /**
+   * 表达式不合规导致抛出异常
+   * @return 表达式不合规的异常
+   */
+  public static UnsupportedOperationException uoe() {
+    return new UnsupportedOperationException("表达式异常");
+  }
 
   /**
    * 字段不存在导致抛出异常
@@ -63,5 +69,44 @@ public class CommonQuery {
    */
   public <I> I toAst(ICommonQueryAst<I> bst, I initQuery) {
     return bst.toAst(this, initQuery);
+  }
+
+  /**
+   * 过滤表达式中 op 允许值
+   */
+  public enum FilterOperator {
+    /**
+     * 等于
+     */
+    EQ,
+    /**
+     * 不等于
+     */
+    NE,
+    /**
+     * 在某范围内 支持枚举、数值、日期时间
+     */
+    IN,
+    /**
+     * 不在某范围内 支持枚举、数值、日期时间
+     */
+    OUT,
+    /**
+     * 大于 支持数值、日期时间
+     */
+    GT,
+    /**
+     * 小于 支持数值、日期时间
+     */
+    LT,
+    /**
+     * 大于等于 支持数值、日期时间
+     */
+    GE,
+    /**
+     * 小于等于 支持数值、日期时间
+     */
+    LE,
+    ;
   }
 }
