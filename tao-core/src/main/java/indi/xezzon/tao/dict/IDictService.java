@@ -13,15 +13,15 @@ public interface IDictService {
    * @param tag 字典目
    * @return 字典
    */
-  List<IDict> findByTag(String tag);
+  List<? extends IDict> findByTag(String tag);
 
   /**
    * 查询字典 （含数据库与枚举类，数据库优先级更高）
    * @param tag 字典目
    * @return 字典
    */
-  default List<IDict> getByTag(String tag) {
-    List<IDict> dict = findByTag(tag);
+  default List<? extends IDict> getByTag(String tag) {
+    List<? extends IDict> dict = findByTag(tag);
     if (dict.isEmpty()) {
       dict = DictFactory.get(tag);
     }
@@ -35,7 +35,7 @@ public interface IDictService {
    * @return 字典值
    */
   default IDict getByTagAndCode(String tag, String code) {
-    List<IDict> dictionaries = this.getByTag(tag);
+    List<? extends IDict> dictionaries = this.getByTag(tag);
     if (dictionaries == null) {
       return null;
     }
