@@ -6,6 +6,45 @@
 
 ## 通用查询组件
 
+通用查询组件是将查询参数转换为 DSL 然后进行查询。这里只定义了接口，需要根据具体使用的 DSL 框架实现具体类。
+
+以 QueryDSL 实现的 demo 如下：
+
+```java
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Dict;
+import com.querydsl.sql.SQLQuery;
+import indi.xezzon.tao.domain.CommonQuery;
+import indi.xezzon.tao.domain.ICommonQueryAst;
+
+@PersistenceCapable
+class DictDO implements ICommonQueryAst<SQLQuery<QDict>> {
+
+  @Override
+  public SQLQuery<QDict> toAst(CommonQuery commonQuery, SQLQuery<QDict> query) {
+    // 组装查询参数逻辑（略）
+    return query;
+  }
+}
+
+@Repository
+@Transactional(rollbackFor = Exception.class)
+class DictDAOImpl {
+
+  private static final QDict Q_DICT = QDict.dict;
+  @Resource
+  private SQLQueryFactory queryFactory;
+
+  public Page<Dict> commonQuery(CommonQuery commonQuery) {
+    SQLQuery<QDict> query = commonQuery.toAst(new DictDO(), queryFactory.selectFrom(Q_DICT));
+    List<QDict> records = query.fetch();
+    
+    Page<Dict> page = new Page<>();
+    page.setRecords(BeanUtil.copyToList(records, Dict.class));
+  }
+}
+```
+
 ## 全局异常类
 
 ## **事件总线**
