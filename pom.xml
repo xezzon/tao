@@ -16,7 +16,7 @@
   </modules>
 
   <properties>
-    <revision>1.0-SNAPSHOT</revision>
+    <revision>0.1.0</revision>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <!--依赖版本-->
