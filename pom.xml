@@ -46,8 +46,10 @@
       <!--工具类-->
       <dependency>
         <groupId>cn.hutool</groupId>
-        <artifactId>hutool-core</artifactId>
-        <version>${hutool.version}</version>
+        <artifactId>hutool-bom</artifactId>
+        <version>5.8.2</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <!-- SpringBoot 相关依赖 必须放在最后 -->
       <dependency>
