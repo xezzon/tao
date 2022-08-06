@@ -2,6 +2,22 @@
 
 ## 基于日志注解 + AOP + SpEL 表达式的日志
 
+参照 [如何优雅地记录操作日志？](https://tech.meituan.com/2021/09/16/operational-logbook.html) 实现的简易日志切面。
+
+demo 如下：
+
+```java
+import indi.xezzon.tao.logger.LogRecord;
+
+class UserServiceImpl {
+
+  @LogRecord(value = "用户 #{#user.username} 登陆")
+  void login(User user) {
+
+  }
+}
+```
+
 ## 全局 ID 生成器
 
 定义全局 ID 生成器接口，具体实现类可以以不同方式（Redis、雪花、UUID等）实现该接口。使用时可以通过指定类或条件注入的方式指定具体的实现类。通常用于一个系统内，不同表/不同环境使用不同逻辑的 ID 生成器。
