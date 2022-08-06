@@ -11,10 +11,10 @@ import java.util.Map;
  */
 public final class DictFactory {
 
+  private static final Map<String, List<IDict>> DICT_MAP = new HashMap<>();
+
   private DictFactory() {
   }
-
-  private static final Map<String, List<IDict>> DICT_MAP = new HashMap<>();
 
   public static void register(String tag, List<IDict> dict) {
     if (tag != null && !tag.isEmpty()) {

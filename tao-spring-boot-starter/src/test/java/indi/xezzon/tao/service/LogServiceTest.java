@@ -29,18 +29,9 @@ class LogServiceTest {
 @Component
 class LogService {
 
-  @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}")
-  public void log(User user) {
-    System.out.println("日志测试");
-  }
-
-  public String sayPassword(String password) {
-    return "say password: " + password;
-  }
-
   public static void main(String[] args) {
     ExpressionParser parser = new SpelExpressionParser();
-    List<Boolean> list = new ArrayList<Boolean>();
+    List<Boolean> list = new ArrayList<>();
     list.add(true);
     EvaluationContext ctx2 = new StandardEvaluationContext();
     // 将list设置成EvaluationContext的一个变量
@@ -49,6 +40,15 @@ class LogService {
         .getValue(ctx2, String.class);
     // list集合的第一个元素被改变
     System.out.println(value);
+  }
+
+  @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}")
+  public void log(User user) {
+    System.out.println("日志测试");
+  }
+
+  public String sayPassword(String password) {
+    return "say password: " + password;
   }
 }
 
