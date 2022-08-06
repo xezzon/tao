@@ -5,6 +5,7 @@ package indi.xezzon.tao.context;
  * @author xezzon
  */
 public class UserContext {
+
   private static final InheritableThreadLocal<String> CURRENT_USER_ID = new InheritableThreadLocal<>();
 
   public static String getId() {

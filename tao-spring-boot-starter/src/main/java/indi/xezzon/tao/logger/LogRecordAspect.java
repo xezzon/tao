@@ -23,6 +23,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogRecordAspect {
 
+  /**
+   * 获取日志解析上下文
+   * @return 日志解析上下文 包含方法参数及被切面的对象
+   */
+  public static EvaluationContext getEvaluationContext(ProceedingJoinPoint pjp) {
+    EvaluationContext evaluationContext = new StandardEvaluationContext(pjp.getTarget());
+    String[] parameterNames = ((MethodSignature) pjp.getSignature()).getParameterNames();
+    Object[] args = pjp.getArgs();
+    for (int i = 0, cnt = parameterNames.length; i < cnt; i++) {
+      evaluationContext.setVariable(parameterNames[i], args[i]);
+    }
+    return evaluationContext;
+  }
+
   @Around("@annotation(logRecord)")
   public Object around(ProceedingJoinPoint point, LogRecord logRecord) throws Throwable {
     // 日志实体
@@ -54,19 +68,5 @@ public class LogRecordAspect {
       logger.error(logValue, e);
       throw e;
     }
-  }
-
-  /**
-   * 获取日志解析上下文
-   * @return 日志解析上下文 包含方法参数及被切面的对象
-   */
-  public static EvaluationContext getEvaluationContext(ProceedingJoinPoint pjp) {
-    EvaluationContext evaluationContext = new StandardEvaluationContext(pjp.getTarget());
-    String[] parameterNames = ((MethodSignature) pjp.getSignature()).getParameterNames();
-    Object[] args = pjp.getArgs();
-    for (int i = 0, cnt = parameterNames.length; i < cnt; i++) {
-      evaluationContext.setVariable(parameterNames[i], args[i]);
-    }
-    return evaluationContext;
   }
 }

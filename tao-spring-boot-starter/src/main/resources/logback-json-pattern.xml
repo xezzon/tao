@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-  <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="spring-boot-application"/>
-
   <property name="JSON_PATTERN" value='
     {
     "app": "${APP_NAME}",
@@ -17,4 +15,7 @@
     "traceId": "%mdc{traceId}"
     }
   '/>
+
+  <springProperty defaultValue="spring-boot-application" name="APP_NAME" scope="context"
+    source="spring.application.name"/>
 </included>

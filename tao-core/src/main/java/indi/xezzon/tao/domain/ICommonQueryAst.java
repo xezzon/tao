@@ -2,8 +2,8 @@ package indi.xezzon.tao.domain;
 
 /**
  * 通用查询组件抽象语法树
- * @author xezzon
  * @param <I> 抽象语法树实现类
+ * @author xezzon
  */
 public interface ICommonQueryAst<I> {
 

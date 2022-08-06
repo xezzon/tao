@@ -8,6 +8,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 /**
  * 解析日志中 SpEL 表达式的解析器
+ * @author xezzon
  */
 public class LogRecordExpressionEvaluator {
 
