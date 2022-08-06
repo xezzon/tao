@@ -3,22 +3,20 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>indi.xezzon</groupId>
-  <artifactId>tao</artifactId>
-  <version>${revision}</version>
+  <artifactId>tao-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>tao</name>
   <description>软件开发管理平台</description>
   <scm>
-    <url>https://e.coding.net/xezzo/tao/tao-server.git</url>
+    <url>https://e.coding.net/xezzo/tao/tao-spring-boot-starter.git</url>
   </scm>
 
   <modules>
     <module>tao-core</module>
     <module>tao-spring-boot-starter</module>
-    <module>tao-admin</module>
   </modules>
 
   <properties>
@@ -35,14 +33,14 @@
     <dependencies>
       <!--二方库-->
       <dependency>
-        <groupId>indi.xezzon</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>tao-core</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>indi.xezzon</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>tao-spring-boot-starter</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <!--工具类-->
       <dependency>
@@ -62,6 +60,8 @@
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
     </dependencies>
   </dependencyManagement>
