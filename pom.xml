@@ -23,6 +23,7 @@
     <revision>0.2.0</revision>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--依赖版本-->
     <spring-boot.version>2.6.8</spring-boot.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
