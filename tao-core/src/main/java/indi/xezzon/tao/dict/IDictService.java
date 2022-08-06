@@ -3,6 +3,9 @@ package indi.xezzon.tao.dict;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author xezzon
+ */
 public interface IDictService {
 
   /**
@@ -19,12 +22,18 @@ public interface IDictService {
    */
   default List<IDict> getByTag(String tag) {
     List<IDict> dict = findByTag(tag);
-    if (dict == null) {
+    if (dict.isEmpty()) {
       dict = DictFactory.get(tag);
     }
     return dict;
   }
 
+  /**
+   * 查找字典值
+   * @param tag 字典目
+   * @param code 字典编码
+   * @return 字典值
+   */
   default IDict getByTagAndCode(String tag, String code) {
     List<IDict> dictionaries = this.getByTag(tag);
     if (dictionaries == null) {

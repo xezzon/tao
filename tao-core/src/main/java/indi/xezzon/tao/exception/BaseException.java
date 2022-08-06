@@ -1,15 +1,13 @@
 package indi.xezzon.tao.exception;
 
-import java.io.Serial;
-
 /**
  * 业务异常基础类
  * @author xezzon
  */
 public class BaseException extends RuntimeException {
-  @Serial
-  private static final long serialVersionUID = -1L;
 
+  @java.io.Serial
+  private static final long serialVersionUID = 8565056568458668598L;
   /**
    * 错误码
    */

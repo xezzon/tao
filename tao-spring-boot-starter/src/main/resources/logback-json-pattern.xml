@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+  <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="spring-boot-application"/>
+
+  <property name="JSON_PATTERN" value='
+    {
+    "app": "${APP_NAME}",
+    "level": "%level",
+    "message": "%message",
+    "catalog": "%mdc{catalog}",
+    "location": "%logger{15}",
+    "thread": "%thread",
+    "timestamp": "%date",
+    "spend": "%mdc{spend}",
+    "stack_trace": "%exception",
+    "operator": "%mdc{operator}",
+    "traceId": "%mdc{traceId}"
+    }
+  '/>
+</included>
