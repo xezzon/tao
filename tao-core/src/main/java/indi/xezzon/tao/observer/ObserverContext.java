@@ -36,6 +36,8 @@ public class ObserverContext {
   public static <T extends Observation> void post(T observation) {
     List<Consumer> observers = OBSERVER_MAP.getOrDefault(observation.getClass(),
         Collections.emptyList());
-    observers.forEach(observer -> observer.accept(observation));
+    observers
+        .parallelStream()
+        .forEach(observer -> observer.accept(observation));
   }
 }
