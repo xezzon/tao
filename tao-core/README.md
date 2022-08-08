@@ -6,11 +6,7 @@
 
 字典可以分为两类，枚举字典与用户配置的字典。将两者实现统一的 IDict 接口，可以有效减少字典项的配置工作。
 
-在实体类中，使用枚举类是优于使用 String 类型的。首先，使用枚举类可以保证值一定出现在枚举类之间，如果出现了意外值，会直接抛出错误，从而实现 fail-fast
-机制。其次，虽然数据库存储使用的是 VARCHAR 类型，但是许多 ORM 框架是可以自动的调用 `valueOf()` 方法将其转换为对应的枚举类的。 SpringMVC
-亦是同理，接收参数时返回自动转换为枚举类，返回值可以通过序列化方法，或者返回  `IDict`
-接口，做到枚举的自动翻译，`{ "id": "0", "auditStatus": { "tag": "AuditStatusEnum", "code": "PASS", "label": "通过", "ordinal": 2 } }`
-。另外，枚举类型还可以简化状态机，在此不做详述。总之，遵循行业内的共识以及使用语法糖是可以享受很多技术红利的。
+在实体类中，使用枚举类是优于使用 String 类型的。首先，使用枚举类可以保证值一定出现在枚举类之间，如果出现了意外值，会直接抛出错误，从而实现 fail-fast 机制。其次，虽然数据库存储使用的是 VARCHAR 类型，但是许多 ORM 框架是可以自动的调用 `valueOf()` 方法将其转换为对应的枚举类的。 SpringMVC 亦是同理，接收参数时返回自动转换为枚举类，返回值可以通过序列化方法，或者返回  `IDict` 接口，做到枚举的自动翻译，`{ "id": "0", "auditStatus": { "tag": "AuditStatusEnum", "code": "PASS", "label": "通过", "ordinal": 2 } }` 。另外，枚举类型还可以简化状态机，在此不做详述。总之，遵循行业内的共识以及使用语法糖是可以享受很多技术红利的。
 
 demo 如下：
 
@@ -126,8 +122,9 @@ class DictDAOImpl {
 
 ## **事件总线**
 
-参照 Google Guava 的 [EevntBus](https://github.com/google/guava/wiki/EventBusExplained)
-，实现了一个简易的事件总线。不同于 EventBus 的注解 + 反射的实现机制，这里使用的是函数式范式 + 手动注册的方式（可以自行实现通过代理模式或其他方式自动注册）。
+参照 Google Guava 的 [EventBus](https://github.com/google/guava/wiki/EventBusExplained)，实现了一个简易的事件总线。不同于 EventBus 的注解 + 反射的实现机制，这里使用的是函数式范式 + 手动注册的方式（可以自行实现通过代理模式或其他方式自动注册）。
+
+事件总线是使用观察者模式，实现模块间松耦合的效果。尤其是 SpringBoot 2.6 之后，循环引用被默认禁止，事件总线机制变得更加有效。
 
 demo 如下：
 
@@ -150,12 +147,16 @@ class UserServiceImpl {
   }
 }
 
-class MessageServiceImpl {
+class MessageServiceImpl implements MessageService {
+  @Resource
+  private MessageService service;
 
   @PostConstruct
   public void init() {
     // 注册事件观察者
     ObserverContext.register(RegisterObservation.class, this::handleRegisterObservation);
+    // 必要时需要通过注入自身来注册，否则可能会导致事务/异步等机制失效
+    //ObserverContext.register(RegisterObservation.class, service::handleRegisterObservation);
   }
 
   public void handleRegisterObservation(RegisterObservation observation) {
