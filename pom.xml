@@ -84,10 +84,15 @@
   </build>
 
   <distributionManagement>
-    <repository>
-      <id>xezzo-tao-central</id>
-      <name>central</name>
+    <snapshotRepository>
+      <id>coding</id>
+      <name>coding</name>
       <url>https://xezzo-maven.pkg.coding.net/repository/tao/central/</url>
+    </snapshotRepository>
+    <repository>
+      <id>github</id>
+      <name>github</name>
+      <url>https://maven.pkg.github.com/xezzon/tao-spring-boot-starter</url>
     </repository>
   </distributionManagement>
 </project>
