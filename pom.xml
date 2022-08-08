@@ -28,6 +28,7 @@
     <spring-boot.version>2.6.8</spring-boot.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <hutool.version>5.8.2</hutool.version>
+    <jetbrains-annotation.version>23.0.0</jetbrains-annotation.version>
   </properties>
 
   <dependencyManagement>
@@ -50,6 +51,11 @@
         <version>5.8.2</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${jetbrains-annotation.version}</version>
       </dependency>
       <!-- SpringBoot 相关依赖 必须放在最后 -->
       <dependency>

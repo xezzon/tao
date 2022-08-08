@@ -30,5 +30,9 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
   </dependencies>
 </project>
