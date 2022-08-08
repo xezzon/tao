@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 观察者调度中心
@@ -21,7 +22,7 @@ public class ObserverContext {
    * @param consumer 观察者
    * @param <T> 消息类型泛型
    */
-  public static <T extends Observation> void register(Class<T> clazz, Consumer<T> consumer) {
+  public static <T extends Observation> void register(@NotNull Class<T> clazz, @NotNull Consumer<T> consumer) {
     List<Consumer> observers = OBSERVER_MAP.getOrDefault(clazz,
         new LinkedList<>());
     observers.add(consumer);
@@ -33,9 +34,11 @@ public class ObserverContext {
    * @param observation 消息
    * @param <T> 消息类型泛型
    */
-  public static <T extends Observation> void post(T observation) {
+  public static <T extends Observation> void post(@NotNull T observation) {
     List<Consumer> observers = OBSERVER_MAP.getOrDefault(observation.getClass(),
         Collections.emptyList());
-    observers.forEach(observer -> observer.accept(observation));
+    observers
+        .parallelStream()
+        .forEach(observer -> observer.accept(observation));
   }
 }
