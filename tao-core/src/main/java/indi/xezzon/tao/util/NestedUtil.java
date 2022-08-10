@@ -50,4 +50,41 @@ public class NestedUtil {
       Function<I, List<T>> function) {
     return nest(initial, nested, function, TreeNode::getId, TreeNode::setChildren);
   }
+
+  /**
+   * 递归获取下级所有对象（平铺）
+   * @param initial 上级ID
+   * @param nested 最大递归次数 -1表示不限
+   * @param function 通过上级ID获取下一级对象的函数
+   * @param getId 通过对象获取id
+   * @param <T> 对象类型
+   * @param <I> ID 类型
+   * @return 平铺对象集合
+   */
+  public static <T, I> Set<T> flat(I initial, byte nested, Function<I, Set<T>> function,
+      Function<T, I> getId) {
+    if (nested == 0) {
+      return Collections.emptySet();
+    }
+    Set<T> results = function.apply(initial);
+    for (T result : results) {
+      Set<T> children = flat(initial, (byte) (nested - 1), function, getId);
+      results.addAll(children);
+    }
+    return results;
+  }
+
+  /**
+   * 为 TreeNode 接口重载 {@link NestedUtil#flat(Object, byte, Function, Function)} 接口
+   * @param initial 上级ID
+   * @param nested 最大递归次数 -1表示不限
+   * @param function 通过上级ID获取下一级对象的函数
+   * @param <T> 对象类型
+   * @param <I> ID 类型
+   * @return 平铺对象集合
+   */
+  public static <T extends TreeNode<T, I>, I> Set<T> flat(I initial, byte nested,
+      Function<I, Set<T>> function) {
+    return flat(initial, nested, function, TreeNode::getId);
+  }
 }
