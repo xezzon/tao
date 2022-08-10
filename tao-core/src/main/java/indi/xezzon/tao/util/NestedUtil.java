@@ -4,6 +4,7 @@ import indi.xezzon.tao.domain.TreeNode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -66,7 +67,7 @@ public class NestedUtil {
     if (nested == 0) {
       return Collections.emptySet();
     }
-    Set<T> results = function.apply(initial);
+    Set<T> results = new CopyOnWriteArraySet<>(function.apply(initial));
     for (T result : results) {
       Set<T> children = flat(initial, (byte) (nested - 1), function, getId);
       results.addAll(children);
