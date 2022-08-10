@@ -177,3 +177,34 @@ class TeamServiceImpl {
   }
 }
 ```
+
+## 树形结构接口
+
+为以组织架构为例的树形结构定义接口。并为树形结构封装了递归搜索和平铺递归搜索的工具。
+
+以递归搜索工具为例：
+
+```java
+import indi.xezzon.tao.domain.TreeNode;
+import indi.xezzon.tao.util.NestedUtil;
+import java.util.List;
+
+class Department implements TreeNode<Department, String> {
+
+  private String id;
+  private String parentId;
+  private List<Department> children;
+
+  // 省略 getter setter
+}
+
+class DepartmentServiceImpl {
+
+  private DepartmentDAO departmentDAO;
+
+  public List<Department> listNested(String id) {
+    return NestedUtil.nest(id, (byte) -1,
+        (o) -> departmentDAO.list(new Department().setParentId(o)));
+  }
+}
+```
