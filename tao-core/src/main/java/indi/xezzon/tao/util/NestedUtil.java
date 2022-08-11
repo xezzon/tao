@@ -67,9 +67,10 @@ public class NestedUtil {
     if (nested == 0) {
       return Collections.emptySet();
     }
-    Set<T> results = new CopyOnWriteArraySet<>(function.apply(initial));
-    for (T result : results) {
-      Set<T> children = flat(initial, (byte) (nested - 1), function, getId);
+    Set<T> apply = function.apply(initial);
+    Set<T> results = new CopyOnWriteArraySet<>(apply);
+    for (T t : apply) {
+      Set<T> children = flat(getId.apply(t), (byte) (nested - 1), function, getId);
       results.addAll(children);
     }
     return results;
