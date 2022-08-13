@@ -6,7 +6,7 @@
 ，实现了一个简易的事件总线。不同于 EventBus 的注解 + 反射的实现机制，这里使用的是函数式范式 +
 手动注册的方式（可以自行实现通过代理模式或其他方式自动注册）。
 
-事件总线是使用观察者模式，实现模块间松耦合的效果。尤其是 SpringBoot 2.6 之后，循环引用被默认禁止，事件总线机制变得更加有效。
+在 Spring 体系下，可以使用 [Spring Event](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/EventListener.html) 进行替代。
 
 demo 如下：
 
