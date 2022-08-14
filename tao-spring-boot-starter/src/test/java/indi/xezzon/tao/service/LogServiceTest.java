@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 class LogServiceTest {
 
   @Resource
-  private LogService logService;
+  private transient LogService logService;
 
   @Test
   void log() {
@@ -28,6 +30,8 @@ class LogServiceTest {
 
 @Component
 class LogService {
+
+  private static final Logger log = LoggerFactory.getLogger(LogService.class);
 
   public static void main(String[] args) {
     ExpressionParser parser = new SpelExpressionParser();
@@ -39,12 +43,12 @@ class LogService {
     String value = parser.parseExpression("测试： #{#list[0]}", new TemplateParserContext())
         .getValue(ctx2, String.class);
     // list集合的第一个元素被改变
-    System.out.println(value);
+    log.debug(value);
   }
 
   @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}")
   public void log(User user) {
-    System.out.println("日志测试");
+    log.debug("日志测试");
   }
 
   public String sayPassword(String password) {

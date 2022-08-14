@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 递归工具
@@ -25,10 +26,15 @@ public class NestedUtil {
    * @param <I> ID 类型
    * @return 对象树型结构
    */
-  public static <T, I> List<T> nest(I initial, int nested, Function<I, List<T>> function,
-      Function<T, I> getId, BiConsumer<T, List<T>> callback) {
+  public static <T, I> List<T> nest(
+      I initial,
+      int nested,
+      @NotNull Function<I, List<T>> function,
+      @NotNull Function<T, I> getId,
+      @NotNull BiConsumer<T, List<T>> callback
+  ) {
     if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
-      throw new RuntimeException("递归次数过大");
+      throw new IndexOutOfBoundsException("递归次数过大");
     }
     if (nested == 0) {
       return Collections.emptyList();
@@ -50,8 +56,11 @@ public class NestedUtil {
    * @param <I> ID 类型
    * @return 对象树型结构
    */
-  public static <T extends TreeNode<T, I>, I> List<T> nest(I initial, int nested,
-      Function<I, List<T>> function) {
+  public static <T extends TreeNode<T, I>, I> List<T> nest(
+      I initial,
+      int nested,
+      @NotNull Function<I, List<T>> function
+  ) {
     return nest(initial, nested, function, TreeNode::getId, TreeNode::setChildren);
   }
 
@@ -65,10 +74,14 @@ public class NestedUtil {
    * @param <I> ID 类型
    * @return 平铺对象集合
    */
-  public static <T, I> Set<T> flat(I initial, int nested, Function<I, Set<T>> function,
-      Function<T, I> getId) {
+  public static <T, I> Set<T> flat(
+      I initial,
+      int nested,
+      @NotNull Function<I, Set<T>> function,
+      @NotNull Function<T, I> getId
+  ) {
     if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
-      throw new RuntimeException("递归次数过大");
+      throw new IndexOutOfBoundsException("递归次数过大");
     }
     if (nested == 0) {
       return Collections.emptySet();
@@ -91,8 +104,11 @@ public class NestedUtil {
    * @param <I> ID 类型
    * @return 平铺对象集合
    */
-  public static <T extends TreeNode<T, I>, I> Set<T> flat(I initial, int nested,
-      Function<I, Set<T>> function) {
+  public static <T extends TreeNode<T, I>, I> Set<T> flat(
+      I initial,
+      int nested,
+      @NotNull Function<I, Set<T>> function
+  ) {
     return flat(initial, nested, function, TreeNode::getId);
   }
 }
