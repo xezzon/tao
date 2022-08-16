@@ -11,10 +11,12 @@
 demo 如下：
 
 ```java
+import indi.xezzon.tao.observer.Observable;
 import indi.xezzon.tao.observer.Observation;
+import indi.xezzon.tao.observer.ObservationContext;
 import indi.xezzon.tao.observer.ObserverContext;
 
-class RegisterObservation implements Observation {
+class RegisterObservable implements Observable {
 
   private String username;
   private String email;
@@ -24,8 +26,8 @@ class UserServiceImpl {
 
   public void register(User user) {
     // 用户注册逻辑（略）
-    RegisterObservation observation = new RegisterObservation();
-    ObserverContext.post(observation);
+    RegisterObservable observation = new RegisterObservable();
+    ObservationContext.post(observation);
   }
 }
 
@@ -37,12 +39,12 @@ class MessageServiceImpl implements MessageService {
   @PostConstruct
   public void init() {
     // 注册事件观察者
-    ObserverContext.register(RegisterObservation.class, this::handleRegisterObservation);
+    ObservationContext.register(RegisterObservable.class, this::handleObservation);
     // 必要时需要通过注入自身来注册，否则可能会导致事务/异步等机制失效
-    //ObserverContext.register(RegisterObservation.class, service::handleRegisterObservation);
+    //ObservationContext.register(RegisterObservable.class, service::handleObservation);
   }
 
-  public void handleRegisterObservation(RegisterObservation observation) {
+  public void handleObservation(RegisterObservable observation) {
     // 处理用户注册后发送消息的逻辑（略）
   }
 }
@@ -52,10 +54,10 @@ class TeamServiceImpl {
   @PostConstruct
   public void init() {
     // 注册事件观察者
-    ObserverContext.register(RegisterObservation.class, this::handleRegisterObservation);
+    ObservationContext.register(RegisterObservable.class, this::handleObservation);
   }
 
-  public void handleRegisterObservation(RegisterObservation observation) {
+  public void handleObservation(RegisterObservable observation) {
     // 处理用户注册后创建团队的逻辑（略）
   }
 }

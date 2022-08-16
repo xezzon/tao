@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * 观察者调度中心
  * @author xezzon
  */
-public class ObserverContext {
+public class ObservationContext {
 
   private static final Map<Class<? extends Observation>, Set<Consumer>> OBSERVER_MAP = new ConcurrentHashMap<>();
 
