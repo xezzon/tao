@@ -1,12 +1,15 @@
 package indi.xezzon.tao.util;
 
 import indi.xezzon.tao.domain.TreeNode;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -59,9 +62,12 @@ public class NestedUtil {
   public static <T extends TreeNode<T, I>, I> List<T> nest(
       I initial,
       int nested,
-      @NotNull Function<I, List<T>> function
+      @NotNull Function<Collection<I>, Collection<T>> function
   ) {
-    return nest(initial, nested, function, TreeNode::getId, TreeNode::setChildren);
+    List<T> apply = new CopyOnWriteArrayList<>(function.apply(Collections.singleton(initial)));
+    Set<T> tree = flat(Collections.singleton(initial), nested, function);
+    apply.forEach(t -> t.setChildrenNested(tree));
+    return apply;
   }
 
   /**
@@ -77,7 +83,7 @@ public class NestedUtil {
   public static <T, I> Set<T> flat(
       I initial,
       int nested,
-      @NotNull Function<I, Set<T>> function,
+      @NotNull Function<I, Collection<T>> function,
       @NotNull Function<T, I> getId
   ) {
     if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
@@ -86,7 +92,7 @@ public class NestedUtil {
     if (nested == 0) {
       return Collections.emptySet();
     }
-    Set<T> apply = function.apply(initial);
+    Collection<T> apply = function.apply(initial);
     Set<T> results = new CopyOnWriteArraySet<>(apply);
     for (T t : apply) {
       Set<T> children = flat(getId.apply(t), nested - 1, function, getId);
@@ -105,10 +111,26 @@ public class NestedUtil {
    * @return 平铺对象集合
    */
   public static <T extends TreeNode<T, I>, I> Set<T> flat(
-      I initial,
+      final Collection<I> initial,
       int nested,
-      @NotNull Function<I, Set<T>> function
+      @NotNull Function<Collection<I>, Collection<T>> function
   ) {
-    return flat(initial, nested, function, TreeNode::getId);
+    if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
+      throw new IndexOutOfBoundsException("递归次数过大");
+    }
+    if (nested == 0) {
+      return Collections.emptySet();
+    }
+    if (initial.isEmpty()) {
+      return Collections.emptySet();
+    }
+    Collection<T> apply = function.apply(initial);
+    Set<T> results = new CopyOnWriteArraySet<>(apply);
+    Set<I> applyIds = apply.parallelStream()
+        .map(TreeNode::getId)
+        .collect(Collectors.toSet());
+    Set<T> children = flat(applyIds, nested - 1, function);
+    results.addAll(children);
+    return results;
   }
 }
