@@ -216,3 +216,27 @@ class DepartmentServiceImpl {
   }
 }
 ```
+
+## 基础异常类
+
+根据阿里巴巴公司出品的[《Java开发手册》](https://github.com/alibaba/p3c)，定义了三种基础异常。开发时，可以通过继承这三类基础异常，并通过全局异常拦截器 ControllerAdvice 对基础异常进行拦截。
+
+demo 如下：
+
+```java
+import indi.xezzon.tao.exception.ClientException;
+
+class UserNotFoundException extends ClientException {
+
+  public static final String ERROR_CODE = "A0201";
+
+
+  public UserNotFoundException(String message) {
+    super(ERROR_CODE, message);
+  }
+
+  public UserNotFoundException(String message, Throwable cause) {
+    super(ERROR_CODE, message, cause);
+  }
+}
+```
