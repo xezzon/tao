@@ -64,7 +64,7 @@ public class LogRecordAspect {
     } catch (BaseException e) {
       logger.warn(logValue, e);
       throw e;
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error(logValue, e);
       throw e;
     }

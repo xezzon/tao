@@ -6,7 +6,7 @@
 ，实现了一个简易的事件总线。不同于 EventBus 的注解 + 反射的实现机制，这里使用的是函数式范式 +
 手动注册的方式（可以自行实现通过代理模式或其他方式自动注册）。
 
-事件总线是使用观察者模式，实现模块间松耦合的效果。尤其是 SpringBoot 2.6 之后，循环引用被默认禁止，事件总线机制变得更加有效。
+在 Spring 体系下，可以使用 [Spring Event](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/EventListener.html) 进行替代。
 
 demo 如下：
 
@@ -213,6 +213,30 @@ class DepartmentServiceImpl {
   public List<Department> listNested(String id) {
     return NestedUtil.nest(id, (byte) -1,
         (o) -> departmentDAO.list(new Department().setParentId(o)));
+  }
+}
+```
+
+## 基础异常类
+
+根据阿里巴巴公司出品的[《Java开发手册》](https://github.com/alibaba/p3c)，定义了三种基础异常。开发时，可以通过继承这三类基础异常，并通过全局异常拦截器 ControllerAdvice 对基础异常进行拦截。
+
+demo 如下：
+
+```java
+import indi.xezzon.tao.exception.ClientException;
+
+class UserNotFoundException extends ClientException {
+
+  public static final String ERROR_CODE = "A0201";
+
+
+  public UserNotFoundException(String message) {
+    super(ERROR_CODE, message);
+  }
+
+  public UserNotFoundException(String message, Throwable cause) {
+    super(ERROR_CODE, message, cause);
   }
 }
 ```
