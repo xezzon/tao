@@ -33,6 +33,7 @@ public class Result<T> {
     this.code = code;
     this.message = message;
     this.data = data;
+    this.requestId = requestId;
   }
 
   public static <T> Result<T> succeed() {

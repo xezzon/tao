@@ -4,14 +4,12 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * 日志拦截器
  * @author xezzon
  */
-@Component
 public class LogInterceptor implements HandlerInterceptor {
 
   /**
