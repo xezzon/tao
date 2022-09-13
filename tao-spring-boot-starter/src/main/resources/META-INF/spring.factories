@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=indi.xezzon.tao.config.LogConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  indi.xezzon.tao.config.LogAutoConfig

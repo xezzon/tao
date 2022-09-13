@@ -13,14 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 
 /**
  * 处理日志
  * @author xezzon
  */
 @Aspect
-@Component
 public class LogRecordAspect {
 
   /**
