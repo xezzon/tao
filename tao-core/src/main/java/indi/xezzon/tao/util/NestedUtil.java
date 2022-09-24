@@ -37,7 +37,7 @@ public class NestedUtil {
       @NotNull BiConsumer<T, List<T>> callback
   ) {
     if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
-      throw new IndexOutOfBoundsException("递归次数过大");
+      throw tooDeepRecursionLevels();
     }
     if (nested == 0) {
       return Collections.emptyList();
@@ -87,7 +87,7 @@ public class NestedUtil {
       @NotNull Function<T, I> getId
   ) {
     if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
-      throw new IndexOutOfBoundsException("递归次数过大");
+      throw tooDeepRecursionLevels();
     }
     if (nested == 0) {
       return Collections.emptySet();
@@ -116,7 +116,7 @@ public class NestedUtil {
       @NotNull Function<Collection<I>, Collection<T>> function
   ) {
     if (nested > Byte.MAX_VALUE || nested <= Byte.MIN_VALUE) {
-      throw new IndexOutOfBoundsException("递归次数过大");
+      throw tooDeepRecursionLevels();
     }
     if (nested == 0) {
       return Collections.emptySet();
@@ -132,5 +132,9 @@ public class NestedUtil {
     Set<T> children = flat(applyIds, nested - 1, function);
     results.addAll(children);
     return results;
+  }
+
+  private static IndexOutOfBoundsException tooDeepRecursionLevels() {
+    return new IndexOutOfBoundsException("递归次数过大");
   }
 }

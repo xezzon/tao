@@ -10,12 +10,15 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(
-    prefix = "tao.logger",
-    name = "enable",
+    prefix = LogAutoConfig.SPI_PREFIX,
+    name = LogAutoConfig.SPI_NAME,
     havingValue = "true",
     matchIfMissing = true
 )
 public class LogAutoConfig {
+
+  static final String SPI_PREFIX = "tao.logger";
+  static final String SPI_NAME = "enable";
 
   @Bean
   public LogRecordAspect logRecordAspect() {

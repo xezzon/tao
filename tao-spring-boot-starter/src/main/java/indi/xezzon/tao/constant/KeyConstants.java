@@ -2,6 +2,7 @@ package indi.xezzon.tao.constant;
 
 /**
  * 全局键值
+ * @author xezzon
  */
 public class KeyConstants {
 
