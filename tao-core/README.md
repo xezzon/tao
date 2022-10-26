@@ -71,8 +71,8 @@ class TeamServiceImpl {
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Dict;
 import com.querydsl.sql.SQLQuery;
-import indi.xezzon.tao.domain.CommonQuery;
-import indi.xezzon.tao.domain.ICommonQueryAst;
+import indi.xezzon.tao.retrieval.CommonQuery;
+import indi.xezzon.tao.retrieval.ICommonQueryAst;
 
 @PersistenceCapable
 class DictDO implements ICommonQueryAst<SQLQuery<QDict>> {
@@ -118,7 +118,7 @@ demo 如下：
 ```java
 import indi.xezzon.tao.dict.DictFactory;
 import indi.xezzon.tao.dict.IDict;
-import indi.xezzon.tao.domain.CommonQuery;
+import indi.xezzon.tao.retrieval.CommonQuery;
 import java.util.List;
 
 class Bill {
