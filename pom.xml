@@ -29,6 +29,7 @@
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <hutool.version>5.8.2</hutool.version>
     <jetbrains-annotation.version>23.0.0</jetbrains-annotation.version>
+    <antlr.version>4.11.1</antlr.version>
   </properties>
 
   <dependencyManagement>
@@ -57,6 +58,11 @@
         <artifactId>annotations</artifactId>
         <version>${jetbrains-annotation.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>${antlr.version}</version>
+      </dependency>
       <!-- SpringBoot 相关依赖 必须放在最后 -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -78,7 +84,11 @@
   <build>
     <pluginManagement>
       <plugins>
-
+        <plugin>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-maven-plugin</artifactId>
+          <version>${antlr.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
