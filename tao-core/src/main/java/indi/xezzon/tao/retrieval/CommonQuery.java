@@ -1,10 +1,12 @@
 package indi.xezzon.tao.retrieval;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 通用查询组件 参考 OData 规范
@@ -36,6 +38,7 @@ public class CommonQuery {
   private int pageNum;
   /**
    * 页容量
+   * 为 0 时不分页
    */
   private int pageSize;
 
@@ -53,7 +56,7 @@ public class CommonQuery {
    * @return 表达式不合规的异常
    */
   public static UnsupportedOperationException nonexistentField(String field) {
-    return new UnsupportedOperationException("不存在的字段: " + field);
+    return new UnsupportedOperationException("不支持的字段: " + field);
   }
 
   /**
@@ -82,6 +85,9 @@ public class CommonQuery {
    * @return 排序字段、方式
    */
   public List<CommonQuerySorter> parseSort() {
+    if (this.sort == null) {
+      return Collections.emptyList();
+    }
     return this.sort.parallelStream()
         .map(CommonQuerySorter::new)
         .toList();
@@ -90,7 +96,11 @@ public class CommonQuery {
   /**
    * 解析筛选表达式
    */
+  @Nullable
   public ParseTree parseFilter() {
+    if (this.filter == null) {
+      return null;
+    }
     try {
       indi.xezzon.tao.retrieval.CommonQueryFilterLexer lexer =
           new indi.xezzon.tao.retrieval.CommonQueryFilterLexer(
