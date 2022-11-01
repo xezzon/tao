@@ -17,30 +17,30 @@ public class CommonQuery {
   /**
    * 字段范围 默认为全选
    */
-  private Set<String> select;
+  private Set<String> select = null;
   /**
    * 排序表达式<br/>
    * 结构为 field1:asc,field2:desc
    */
-  private List<String> sort;
+  private List<String> sort = Collections.emptyList();
   /**
    * 过滤表达式 <br/>
    * 结构为 ((field1 op value1) OR (field2 op value2)) AND (field3 op value31,value32)
    */
-  private String filter;
+  private String filter = null;
   /**
    * 搜索关键字
    */
-  private String searchKey;
+  private String searchKey = null;
   /**
    * 页码
    */
-  private int pageNum;
+  private int pageNum = 0;
   /**
    * 页容量
    * 为 0 时不分页
    */
-  private int pageSize;
+  private int pageSize = 0;
 
   /**
    * 表达式不合规导致抛出异常
