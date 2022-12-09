@@ -240,3 +240,49 @@ class UserNotFoundException extends ClientException {
   }
 }
 ```
+
+## NewType 接口
+
+参考 Rust 的 NewType 机制，可以在不继承的前提下扩展原类型。
+
+demo 如下：
+
+```java
+import indi.xezzon.tao.domain.NewType;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+
+record MyBigDecimal(BigDecimal get) implements NewType<BigDecimal> {
+
+  private static final NumberFormat PERCENT_INSTANCE = NumberFormat.getPercentInstance();
+
+  public String toPercentString() {
+    return PERCENT_INSTANCE.format(get());
+  }
+
+  public static void main(String[] args) {
+    MyBigDecimal decimal = new MyBigDecimal(BigDecimal.valueOf(Math.random()));
+    // 调用原类型的方法
+    System.out.println(decimal.get().toPlainString());
+    // 调用扩展类型的方法
+    System.out.println(decimal.toPercentString());
+  }
+}
+
+/**
+ * 非 record 方式
+ */
+class NewBigDecimal implements NewType<BigDecimal> {
+
+  private final BigDecimal value;
+
+  MyBigDecimal(BigDecimal value) {
+    this.value = value;
+  }
+
+  @Override
+  public BigDecimal get() {
+    return this.value;
+  }
+}
+```
