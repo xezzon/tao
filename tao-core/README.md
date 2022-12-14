@@ -194,7 +194,6 @@ class BillController {
 
 ```java
 import indi.xezzon.tao.domain.TreeNode;
-import indi.xezzon.tao.util.NestedUtil;
 import java.util.List;
 
 class Department implements TreeNode<Department, String> {
@@ -211,7 +210,7 @@ class DepartmentServiceImpl {
   private DepartmentDAO departmentDAO;
 
   public List<Department> listNested(String id) {
-    return NestedUtil.nest(id, (byte) -1,
+    return TreeNode.nest(id, (byte) -1,
         (o) -> departmentDAO.list(new Department().setParentId(o)));
   }
 }

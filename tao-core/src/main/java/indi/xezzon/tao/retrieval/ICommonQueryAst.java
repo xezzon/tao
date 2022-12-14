@@ -1,7 +1,5 @@
 package indi.xezzon.tao.retrieval;
 
-import indi.xezzon.tao.retrieval.CommonQuery;
-
 /**
  * 通用查询组件抽象语法树
  * @param <I> 抽象语法树实现类
