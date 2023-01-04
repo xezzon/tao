@@ -15,12 +15,12 @@
   </scm>
 
   <modules>
+    <module>tao-bom</module>
     <module>tao-core</module>
     <module>tao-spring-boot-starter</module>
   </modules>
 
   <properties>
-    <revision>1.0-SNAPSHOT</revision>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,23 +28,11 @@
     <spring-boot.version>2.6.8</spring-boot.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <hutool.version>5.8.2</hutool.version>
-    <jetbrains-annotation.version>23.0.0</jetbrains-annotation.version>
-    <antlr.version>4.11.1</antlr.version>
+    <jetbrains-annotation.version>23.1.0</jetbrains-annotation.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <!--二方库-->
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>tao-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>tao-spring-boot-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
       <!--工具类-->
       <dependency>
         <groupId>cn.hutool</groupId>
@@ -53,56 +41,53 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.jetbrains</groupId>
-        <artifactId>annotations</artifactId>
-        <version>${jetbrains-annotation.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-runtime</artifactId>
-        <version>${antlr.version}</version>
-      </dependency>
       <!-- SpringBoot 相关依赖 必须放在最后 -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring-boot.version}</version>
-        <scope>import</scope>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
-        <scope>import</scope>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.antlr</groupId>
-          <artifactId>antlr4-maven-plugin</artifactId>
-          <version>${antlr.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>${jetbrains-annotation.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-core</artifactId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>coding</id>
-      <name>coding</name>
-      <url>https://xezzo-maven.pkg.coding.net/repository/tao/central/</url>
-    </snapshotRepository>
-    <repository>
-      <id>github</id>
-      <name>github</name>
-      <url>https://maven.pkg.github.com/xezzon/tao-spring-boot-starter</url>
-    </repository>
-  </distributionManagement>
+  <profiles>
+    <profile>
+      <id>release-github</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>coding</id>
+          <name>coding</name>
+          <url>https://xezzo-maven.pkg.coding.net/repository/tao/central/</url>
+        </snapshotRepository>
+        <repository>
+          <id>github</id>
+          <name>github</name>
+          <url>https://maven.pkg.github.com/xezzon/tao-spring-boot-starter</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
 </project>
