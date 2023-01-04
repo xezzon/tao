@@ -6,7 +6,7 @@
   <parent>
     <groupId>indi.xezzon</groupId>
     <artifactId>tao-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.7.1</version>
   </parent>
   <artifactId>tao-bom</artifactId>
   <packaging>pom</packaging>
