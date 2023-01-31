@@ -6,7 +6,7 @@
   <parent>
     <groupId>indi.xezzon</groupId>
     <artifactId>tao</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
   </parent>
   <artifactId>tao-spring-boot-starter</artifactId>
   <packaging>jar</packaging>
