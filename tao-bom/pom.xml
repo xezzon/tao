@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>indi.xezzon</groupId>
-    <artifactId>tao-parent</artifactId>
+    <artifactId>tao</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>tao-bom</artifactId>
