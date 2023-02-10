@@ -8,12 +8,6 @@
   <version>0.7.2</version>
   <packaging>pom</packaging>
 
-  <name>tao</name>
-  <description>软件开发管理平台</description>
-  <scm>
-    <url>https://e.coding.net/xezzo/tao/tao-spring-boot-starter.git</url>
-  </scm>
-
   <modules>
     <module>tao-bom</module>
     <module>tao-core</module>
@@ -116,7 +110,7 @@
         <repository>
           <id>github</id>
           <name>github</name>
-          <url>https://maven.pkg.github.com/xezzon/tao-spring-boot-starter</url>
+          <url>https://maven.pkg.github.com/xezzon/tao</url>
         </repository>
       </distributionManagement>
     </profile>
