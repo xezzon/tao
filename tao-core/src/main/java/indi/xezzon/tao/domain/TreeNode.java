@@ -45,6 +45,9 @@ public interface TreeNode<T extends TreeNode<T, I>, I> {
     List<T> children = tree.parallelStream()
         .filter(node -> Objects.equals(node.getParentId(), this.getId()))
         .toList();
+    if (children.isEmpty()) {
+      return;
+    }
     this.setChildren(children);
     children.forEach(child -> child.setChildrenNested(tree));
   }
@@ -60,8 +63,7 @@ public interface TreeNode<T extends TreeNode<T, I>, I> {
    * @return 是否叶子节点 true:是;false:否;
    */
   default boolean isLeaf() {
-    List<T> children = this.getChildren();
-    return children == null || children.isEmpty();
+    return this.getChildren() == null;
   }
 
   /**
