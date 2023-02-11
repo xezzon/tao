@@ -2,7 +2,7 @@
 grammar CommonQueryFilter;
 /* 头文件 */
 @header {
-  package indi.xezzon.tao.retrieval;
+  package io.github.xezzon.tao.retrieval;
 }
 /* 词法规则 */
 AND: 'AND';

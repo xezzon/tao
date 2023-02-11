@@ -34,7 +34,7 @@
   <!-- ... -->
   <dependencies>
     <dependency>
-      <groupId>indi.xezzon</groupId>
+      <groupId>io.github.xezzon</groupId>
       <artifactId>tao-spring-boot-starter</artifactId>
       <version>[VERSION]</version><!-- 这里替换为对应的版本 -->
     </dependency>
