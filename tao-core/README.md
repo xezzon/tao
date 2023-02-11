@@ -11,8 +11,8 @@
 demo 如下：
 
 ```java
-import indi.xezzon.tao.observer.Observation;
-import indi.xezzon.tao.observer.ObserverContext;
+import observer.io.github.xezzon.tao.Observation;
+import observer.io.github.xezzon.tao.ObserverContext;
 
 class RegisterObservation implements Observation {
 
@@ -71,8 +71,8 @@ class TeamServiceImpl {
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Dict;
 import com.querydsl.sql.SQLQuery;
-import indi.xezzon.tao.retrieval.CommonQuery;
-import indi.xezzon.tao.retrieval.ICommonQueryAst;
+import retrieval.io.github.xezzon.tao.CommonQuery;
+import retrieval.io.github.xezzon.tao.ICommonQueryAst;
 
 @PersistenceCapable
 class DictDO implements ICommonQueryAst<SQLQuery<QDict>> {
@@ -116,9 +116,9 @@ fail-fast 机制。其次，虽然数据库存储使用的是 VARCHAR 类型，�
 demo 如下：
 
 ```java
-import indi.xezzon.tao.dict.DictFactory;
-import indi.xezzon.tao.dict.IDict;
-import indi.xezzon.tao.retrieval.CommonQuery;
+import dict.io.github.xezzon.tao.DictFactory;
+import dict.io.github.xezzon.tao.IDict;
+import retrieval.io.github.xezzon.tao.CommonQuery;
 import java.util.List;
 
 class Bill {
@@ -193,7 +193,7 @@ class BillController {
 以递归搜索工具为例：
 
 ```java
-import indi.xezzon.tao.domain.TreeNode;
+import domain.io.github.xezzon.tao.TreeNode;
 import java.util.List;
 
 class Department implements TreeNode<Department, String> {
@@ -223,7 +223,7 @@ class DepartmentServiceImpl {
 demo 如下：
 
 ```java
-import indi.xezzon.tao.exception.ClientException;
+import exception.io.github.xezzon.tao.ClientException;
 
 class UserNotFoundException extends ClientException {
 
@@ -247,7 +247,7 @@ class UserNotFoundException extends ClientException {
 demo 如下：
 
 ```java
-import indi.xezzon.tao.domain.NewType;
+import domain.io.github.xezzon.tao.NewType;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 

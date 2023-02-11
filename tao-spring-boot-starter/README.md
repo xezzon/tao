@@ -7,7 +7,7 @@
 demo 如下：
 
 ```java
-import indi.xezzon.tao.logger.LogRecord;
+import io.github.xezzon.tao.logger.LogRecord;
 
 class UserServiceImpl {
 
@@ -25,7 +25,7 @@ class UserServiceImpl {
 例如，生产环境使用 Redis ，而单元测试时，为了减少外部系统的依赖，可以使用雪花替代。 demo 如下：
 
 ```java
-import indi.xezzon.tao.manager.IdGenerator;
+import io.github.xezzon.tao.manager.IdGenerator;
 
 // 方式一： 条件注入
 @Component
