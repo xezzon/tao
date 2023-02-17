@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <ID> ID 类型
  * @author xezzon
  */
-public interface TreeNode<T extends TreeNode<T, ID>, ID> {
+public interface TreeNode<T extends TreeNode<T, ID>, ID> extends Comparable<TreeNode<T, ID>> {
 
   /**
    * 从 initial 开始 逐级向下遍历 nested 级节点
@@ -46,6 +46,36 @@ public interface TreeNode<T extends TreeNode<T, ID>, ID> {
         .collect(Collectors.toSet());
     Set<T> grandChildren = topDown(childIds, nested - 1, function);
     results.addAll(grandChildren);
+    return results;
+  }
+
+  /**
+   * 从 initial 开始 逐级向上遍历 nested 级节点
+   * @param initial 初始ID
+   * @param nested 最大递归级数 -1表示不限
+   * @param function 通过子级ID获取父级对象的函数
+   * @param <T> 对象类型
+   * @param <ID> ID 类型
+   * @return 平铺对象集合
+   */
+  static <T extends TreeNode<T, ID>, ID> Set<T> bottomUp(
+      final Collection<ID> initial,
+      int nested,
+      @NotNull Function<Collection<ID>, Collection<T>> function
+  ) {
+    if (nested == 0) {
+      return Collections.emptySet();
+    }
+    if (initial.isEmpty()) {
+      return Collections.emptySet();
+    }
+    Collection<T> parents = function.apply(initial);
+    Set<T> results = new CopyOnWriteArraySet<>(parents);
+    Set<ID> parentsId = parents.parallelStream()
+        .map(TreeNode::getParentId)
+        .collect(Collectors.toSet());
+    Set<T> grandParents = bottomUp(parentsId, nested - 1, function);
+    results.addAll(grandParents);
     return results;
   }
 
@@ -110,7 +140,7 @@ public interface TreeNode<T extends TreeNode<T, ID>, ID> {
    * 递归设置下级节点
    * @param tree 所有对象（或所有对象的局部）
    */
-  default void build(@NotNull Set<T> tree) {
+  default void build(@NotNull Collection<T> tree) {
     List<T> children = tree.parallelStream()
         .filter(node -> Objects.equals(node.getParentId(), this.getId()))
         .toList();
