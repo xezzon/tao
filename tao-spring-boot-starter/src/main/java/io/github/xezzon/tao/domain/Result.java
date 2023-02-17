@@ -4,6 +4,9 @@ import static io.github.xezzon.tao.constant.KeyConstants.TRACE_ID;
 
 import org.slf4j.MDC;
 
+/**
+ * @author xezzon
+ */
 public class Result<T> {
 
   public static final String SUCCESS_CODE = "00000";

@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ObserverContext {
 
-  private static final Map<Class<? extends Observation>, Set<Consumer>> OBSERVER_MAP = new ConcurrentHashMap<>();
+  private static final Map<Class<? extends Observation>, Set<Consumer>> OBSERVER_MAP =
+      new ConcurrentHashMap<>();
 
   /**
    * 将观察者注册到调度中心
@@ -22,7 +23,10 @@ public class ObserverContext {
    * @param consumer 观察者
    * @param <T> 消息类型泛型
    */
-  public static <T extends Observation> void register(@NotNull Class<T> clazz, @NotNull Consumer<T> consumer) {
+  public static <T extends Observation> void register(
+      @NotNull Class<T> clazz,
+      @NotNull Consumer<T> consumer
+  ) {
     Set<Consumer> observers = OBSERVER_MAP.getOrDefault(clazz,
         new CopyOnWriteArraySet<>());
     observers.add(consumer);

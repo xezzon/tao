@@ -4,7 +4,7 @@ import java.io.Serial;
 
 /**
  * 服务端异常
- * @author xezzon 
+ * @author xezzon
  */
 public class ServerException extends BaseException {
 
