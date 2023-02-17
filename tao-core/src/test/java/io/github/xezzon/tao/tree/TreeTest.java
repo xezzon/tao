@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +56,15 @@ class TreeTest {
     Assertions.assertEquals(10, menus2.size());
     List<Menu> menus3 = Tree.topDown(Collections.singleton("0"), 2, TreeTest::listWithParentId);
     Assertions.assertEquals(8, menus3.size());
+  }
+
+  @Test
+  void bottomUp() {
+    Set<Menu> bottomMenus = DATA_SET.parallelStream()
+        .filter(menu -> Set.of("1211", "1222", "131", "22").contains(menu.getId()))
+        .collect(Collectors.toSet());
+    List<Menu> menus = Tree.bottomUp(bottomMenus, -1, TreeTest::listById);
+    Assertions.assertEquals(10, menus.size());
   }
 
   @Test

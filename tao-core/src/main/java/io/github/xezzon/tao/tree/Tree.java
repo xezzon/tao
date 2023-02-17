@@ -46,6 +46,42 @@ public class Tree {
   }
 
   /**
+   * 从 initial 开始 逐级向上遍历 nested 级节点（包括 initial）
+   * @param initial 初始对象
+   * @param nested 最大递归次数 不限递归次数可设为-1
+   * @param findByIdIn 通过ID获取对象的函数
+   * @param <T> 对象类型
+   * @param <ID> ID 类型
+   * @return 平铺对象集合
+   */
+  public static <T extends TreeNode<T, ID>, ID> List<T> bottomUp(
+      final Collection<T> initial,
+      int nested,
+      @NotNull Function<Collection<ID>, Collection<T>> findByIdIn
+  ) {
+    List<T> result = new CopyOnWriteArrayList<>();
+    Collection<T> incremental = initial;
+    do {
+      if (nested == 0 || nested < Byte.MIN_VALUE) {
+        break;
+      }
+      result.addAll(incremental);
+      Set<ID> idSet = result.parallelStream()
+          .map(TreeNode::getId)
+          .collect(Collectors.toSet());
+      Set<ID> parentsId = incremental.parallelStream()
+          .map(TreeNode::getParentId)
+          .filter(parentId -> !idSet.contains(parentId))
+          .collect(Collectors.toSet());
+      if (parentsId.isEmpty()) {
+        break;
+      }
+      incremental = findByIdIn.apply(parentsId);
+    } while (!incremental.isEmpty());
+    return result;
+  }
+
+  /**
    * 筛选树中最顶级的节点（在树是不完整的情况下，最顶级节点并不一定是根节点）
    * @param tree 树型数据
    * @return 顶级节点
@@ -102,5 +138,23 @@ public class Tree {
     List<T> tree = topDown(childIds, nested, findByParentIdIn);
     build(children, tree);
     return children;
+  }
+
+  /**
+   * 自底向上递归获取树形结构数据
+   * @param initial 上级ID
+   * @param findByIdIn 通过ID获取对象的函数
+   * @param <T> 对象类型
+   * @param <I> ID 类型
+   * @return 对象树型结构
+   */
+  public static <T extends TreeNode<T, I>, I> List<T> bottomUp(
+      Collection<T> initial,
+      @NotNull Function<Collection<I>, Collection<T>> findByIdIn
+  ) {
+    List<T> tree = bottomUp(initial, -1, findByIdIn);
+    List<T> top = top(tree);
+    build(top, tree);
+    return top;
   }
 }
