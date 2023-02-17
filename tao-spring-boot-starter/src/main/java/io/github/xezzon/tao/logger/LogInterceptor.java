@@ -25,7 +25,16 @@ public class LogInterceptor implements HandlerInterceptor {
       @NotNull HttpServletResponse response,
       @NotNull Object handler
   ) throws Exception {
-    MDC.put(KeyConstants.TRACE_ID, UUID.randomUUID().toString());
+    String traceId = request.getHeader(KeyConstants.TRACE_ID);
+    if (traceId == null) {
+      traceId = UUID.randomUUID().toString();
+    }
+    MDC.put(KeyConstants.TRACE_ID, traceId);
+    String pSpanId = request.getHeader(KeyConstants.P_SPAN_ID);
+    if (pSpanId != null) {
+      MDC.put(KeyConstants.P_SPAN_ID, pSpanId);
+    }
+    MDC.put(KeyConstants.SPAN_ID, UUID.randomUUID().toString());
     MDC.put(CATALOG, request.getRequestURI() + ":" + request.getMethod());
     return HandlerInterceptor.super.preHandle(request, response, handler);
   }
