@@ -13,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * @author xezzon
  */
 public class LogInterceptor implements HandlerInterceptor {
+
   public static final String CATALOG = "catalog";
 
   /**
