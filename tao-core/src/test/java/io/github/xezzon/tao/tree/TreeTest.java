@@ -56,6 +56,11 @@ class TreeTest {
     List<Menu> menus3 = Tree.topDown(Collections.singleton("0"), 2, TreeTest::listWithParentId);
     Assertions.assertEquals(8, menus3.size());
   }
+
+  @Test
+  void top() {
+    Assertions.assertEquals(3, Tree.top(DATA_SET).size());
+  }
 }
 
 class Menu implements TreeNode<Menu, String> {

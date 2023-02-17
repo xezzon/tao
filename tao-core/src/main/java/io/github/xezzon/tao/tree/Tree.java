@@ -46,6 +46,20 @@ public class Tree {
   }
 
   /**
+   * 筛选树中最顶级的节点（在树是不完整的情况下，最顶级节点并不一定是根节点）
+   * @param tree 树型数据
+   * @return 顶级节点
+   */
+  public static <T extends TreeNode<T, ?>> List<T> top(Collection<T> tree) {
+    Set<?> ids = tree.parallelStream()
+        .map(TreeNode::getId)
+        .collect(Collectors.toSet());
+    return tree.parallelStream()
+        .filter(node -> !ids.contains(node.getParentId()))
+        .collect(Collectors.toList());
+  }
+
+  /**
    * 递归设置下级节点（面向过程写法）
    * @param tree 所有对象（或所有对象的局部）
    */
