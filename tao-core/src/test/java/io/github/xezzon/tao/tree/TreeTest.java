@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
@@ -70,6 +71,20 @@ class TreeTest {
   @Test
   void top() {
     Assertions.assertEquals(3, Tree.top(DATA_SET).size());
+  }
+
+  @Test
+  void fold() {
+    List<Menu> menus = Tree.fold(DATA_SET);
+    Assertions.assertEquals(3, menus.size());
+  }
+
+  @Test
+  void flatten() {
+    List<Menu> menusTree = Tree.fold(DATA_SET);
+    List<Menu> menusList = Tree.flatten(menusTree);
+    Assertions.assertEquals(DATA_SET.size(), menusList.size());
+    Assertions.assertTrue(menusList.stream().map(TreeNode::getChildren).allMatch(Objects::isNull));
   }
 }
 

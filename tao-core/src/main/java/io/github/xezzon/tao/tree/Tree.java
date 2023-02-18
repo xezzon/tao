@@ -1,5 +1,6 @@
 package io.github.xezzon.tao.tree;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -116,45 +117,38 @@ public class Tree {
   }
 
   /**
-   * 自顶向下递归获取树形结构数据
-   * @param initial 顶级ID
-   * @param nested 最大递归次数 不限递归次数可设为-1
-   * @param findByParentIdIn 通过父级ID获取子级对象的函数
-   * @param <T> 对象类型
-   * @param <I> ID 类型
-   * @return 树型数据结构
+   * 平铺结构转树形结构
+   * @param list 平铺结构数据集
+   * @param <T> 元素类型
+   * @return 树形结构数据集
    */
-  public static <T extends TreeNode<T, I>, I> List<T> topDown(
-      I initial,
-      int nested,
-      @NotNull Function<Collection<I>, Collection<T>> findByParentIdIn
-  ) {
-    List<T> children = new CopyOnWriteArrayList<>(
-        findByParentIdIn.apply(Collections.singleton(initial))
-    );
-    Set<I> childIds = children.parallelStream()
-        .map(TreeNode::getId)
-        .collect(Collectors.toSet());
-    List<T> tree = topDown(childIds, nested, findByParentIdIn);
-    build(children, tree);
-    return children;
+  public static <T extends TreeNode<T, ?>> List<T> fold(Collection<T> list) {
+    List<T> roots = top(list);
+    build(roots, list);
+    return roots;
   }
 
   /**
-   * 自底向上递归获取树形结构数据
-   * @param initial 上级ID
-   * @param findByIdIn 通过ID获取对象的函数
-   * @param <T> 对象类型
-   * @param <I> ID 类型
-   * @return 对象树型结构
+   * 树形结构转平铺结构
+   * @param roots 树形结构数据集
+   * @param <T> 元素类型
+   * @return 平铺结构数据集
    */
-  public static <T extends TreeNode<T, I>, I> List<T> bottomUp(
-      Collection<T> initial,
-      @NotNull Function<Collection<I>, Collection<T>> findByIdIn
-  ) {
-    List<T> tree = bottomUp(initial, -1, findByIdIn);
-    List<T> top = top(tree);
-    build(top, tree);
-    return top;
+  public static <T extends TreeNode<T, ?>> List<T> flatten(Collection<T> roots) {
+    if (roots.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<T> children = roots.parallelStream()
+        .map(TreeNode::getChildren)
+        .filter(Objects::nonNull)
+        .flatMap(List::parallelStream)
+        .toList();
+    for (T root : roots) {
+      root.setChildren(null);
+    }
+    List<T> grandchild = flatten(children);
+    List<T> result = new ArrayList<>(grandchild);
+    result.addAll(roots);
+    return result;
   }
 }
