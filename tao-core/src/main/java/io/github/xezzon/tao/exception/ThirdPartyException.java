@@ -4,7 +4,7 @@ import java.io.Serial;
 
 /**
  * 第三方服务异常
- * @author xezzon 
+ * @author xezzon
  */
 public class ThirdPartyException extends BaseException {
 

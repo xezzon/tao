@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.logger;
 
-import io.github.xezzon.tao.context.UserContext;
 import io.github.xezzon.tao.exception.BaseException;
 import java.time.Duration;
 import java.time.Instant;
@@ -41,8 +40,6 @@ public class LogRecordAspect {
     Logger logger = LoggerFactory.getLogger(point.getTarget().getClass());
     // 开始时间
     Instant startTime = Instant.now();
-    // 操作人
-    MDC.put("operator", UserContext.getId());
     // 日志描述
     if (!logRecord.catalog().isEmpty()) {
       MDC.put("catalog", logRecord.catalog());
