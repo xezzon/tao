@@ -6,7 +6,7 @@ import java.io.Serial;
  * 客户端异常
  * @author xezzon
  */
-public class ClientException extends BaseException {
+public non-sealed class ClientException extends BaseException {
 
   public static final String CLIENT_ERROR_CODE = "A0001";
   @Serial

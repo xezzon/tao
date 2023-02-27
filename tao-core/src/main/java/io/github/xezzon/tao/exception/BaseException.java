@@ -4,7 +4,8 @@ package io.github.xezzon.tao.exception;
  * 业务异常基础类
  * @author xezzon
  */
-public abstract class BaseException extends RuntimeException {
+public abstract sealed class BaseException extends RuntimeException
+    permits ClientException, ServerException, ThirdPartyException {
 
   @java.io.Serial
   private static final long serialVersionUID = 8565056568458668598L;
