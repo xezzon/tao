@@ -6,7 +6,7 @@ import java.io.Serial;
  * 服务端异常
  * @author xezzon
  */
-public class ServerException extends BaseException {
+public non-sealed class ServerException extends BaseException {
 
   public static final String SERVER_ERROR_CODE = "B0001";
   @Serial
