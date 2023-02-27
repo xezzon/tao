@@ -1,4 +1,4 @@
-package io.github.xezzon.tao.domain;
+package io.github.xezzon.tao.web;
 
 import static io.github.xezzon.tao.constant.KeyConstants.TRACE_ID;
 
@@ -6,9 +6,7 @@ import org.slf4j.MDC;
 
 /**
  * @author xezzon
- * @deprecated {@link io.github.xezzon.tao.web.Result}
  */
-@Deprecated(since = "1.0.0")
 public class Result<T> {
 
   public static final String SUCCESS_CODE = "00000";

@@ -1,11 +1,9 @@
-package io.github.xezzon.tao.domain;
+package io.github.xezzon.tao.rs;
 
 /**
  * 参考 Rust 的 NewType 机制
  * @author xezzon
- * @deprecated {@link io.github.xezzon.tao.rs.NewType}
  */
-@Deprecated(since = "1.0.0")
 public interface NewType<T> {
 
   /**
