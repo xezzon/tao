@@ -75,6 +75,7 @@ public class CommonQuery {
    * @param <I> 抽象语法树的具体实现类
    * @return 抽象语法树
    * @throws UnsupportedOperationException 不合规的表达式
+   * @see CommonQuery#getPageNum()
    */
   public <I> I toAst(ICommonQueryAst<I> bst, I initQuery) {
     return bst.toAst(this, initQuery);
