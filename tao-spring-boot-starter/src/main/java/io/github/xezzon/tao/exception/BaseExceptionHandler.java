@@ -44,4 +44,13 @@ public class BaseExceptionHandler {
   public Result<Void> handleThirdPartyException(ThirdPartyException e) {
     return Result.fail(e.getCode(), ERROR_MESSAGE);
   }
+
+  /**
+   * 多消息异常
+   */
+  @ExceptionHandler(MultiException.class)
+  @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+  public Result<?> handleMultiException(MultiException e) {
+    return Result.fail(e.getCode(), null, e.getMessages());
+  }
 }
