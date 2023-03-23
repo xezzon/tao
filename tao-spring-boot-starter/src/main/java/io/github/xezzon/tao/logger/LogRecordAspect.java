@@ -1,6 +1,7 @@
 package io.github.xezzon.tao.logger;
 
 import io.github.xezzon.tao.exception.BaseException;
+import io.github.xezzon.tao.exception.MultiException;
 import java.time.Duration;
 import java.time.Instant;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -56,7 +57,7 @@ public class LogRecordAspect {
       logger.info(logValue);
 
       return ret;
-    } catch (BaseException e) {
+    } catch (BaseException | MultiException e) {
       logger.warn(logValue, e);
       throw e;
     } catch (Exception e) {
