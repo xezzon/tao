@@ -9,6 +9,7 @@ tao 是一组针对 Java Web 开发定义的接口和组件。它向开发者提
 * [树形数据结构](./docs/tree.md)
 * [事件总线](./docs/observer.md)
 * [NewType 代理接口](./docs/NewType.md)
+* [基础异常类](./docs/exception.md)
 
 ## 项目结构
 
