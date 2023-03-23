@@ -8,9 +8,31 @@
 
 分别指 `ClientException`（客户端异常）、`ServerException`（服务端异常）、`ThirdPartyException`（第三方服务异常）。
 
-## 新的异常类
+## 自定义异常类
 
-后续将开源用于管理异常码和生成异常类代码的平台。
+使用者可以继承三类异常自行定义异常类。demo 如下:
+
+```java
+/**
+ * 尚未登录
+ * @author xezzon
+ */
+class UnauthorizedException extends ClientException {
+
+  @Serial
+  private static final long serialVersionUID = 1587877116361597984L;
+  private static final String ERROR_CODE = "A0230";
+  private static final String ERROR_MESSAGE = "尚未登录";
+
+  protected UnauthorizedException() {
+    super(ERROR_CODE, ERROR_MESSAGE);
+  }
+
+  protected UnauthorizedException(String message) {
+    super(ERROR_CODE, message);
+  }
+}
+```
 
 ## 全局异常捕获
 
