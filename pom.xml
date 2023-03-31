@@ -41,10 +41,16 @@
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--依赖版本-->
-    <spring-boot.version>2.6.8</spring-boot.version>
-    <spring-cloud.version>2021.0.1</spring-cloud.version>
-    <hutool.version>5.8.2</hutool.version>
-    <jetbrains-annotation.version>23.1.0</jetbrains-annotation.version>
+    <spring-boot.version>2.7.10</spring-boot.version>
+    <spring-cloud.version>2021.0.6</spring-cloud.version>
+    <hutool.version>5.8.16</hutool.version>
+    <jetbrains-annotation.version>24.0.1</jetbrains-annotation.version>
+    <antlr.version>4.12.0</antlr.version>
+    <!--插件版本-->
+    <maven-source.version>3.2.1</maven-source.version>
+    <maven-javadoc.version>3.4.1</maven-javadoc.version>
+    <maven-gpg.version>3.0.1</maven-gpg.version>
+    <nexus-staging.version>1.6.13</nexus-staging.version>
   </properties>
 
   <dependencyManagement>
@@ -53,7 +59,7 @@
       <dependency>
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-bom</artifactId>
-        <version>5.8.2</version>
+        <version>${hutool.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -99,7 +105,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>${maven-source.version}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -112,7 +118,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>${maven-javadoc.version}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -125,7 +131,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>${maven-gpg.version}</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -174,7 +180,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.13</version>
+            <version>${nexus-staging.version}</version>
             <extensions>true</extensions>
             <configuration>
               <serverId>ossrh</serverId>
