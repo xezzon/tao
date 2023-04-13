@@ -18,7 +18,7 @@ import io.github.xezzon.tao.logger.LogRecord;
 
 class UserServiceImpl {
 
-  @LogRecord(value = "用户 #{#user.username} 登陆", catalog = "用户登录")
+  @LogRecord(value = "用户 #{#user.username} 登录", catalog = "用户登录")
   void login(User user) {
 
   }
