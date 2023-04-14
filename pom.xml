@@ -52,6 +52,7 @@
     <maven-gpg.version>3.0.1</maven-gpg.version>
     <nexus-staging.version>1.6.13</nexus-staging.version>
     <maven-surefire.version>3.0.0-M5</maven-surefire.version>
+    <maven-flatten.version>1.2.7</maven-flatten.version>
   </properties>
 
   <dependencyManagement>
@@ -144,6 +145,31 @@
             <phase>verify</phase>
             <goals>
               <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${maven-flatten.version}</version>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
             </goals>
           </execution>
         </executions>
