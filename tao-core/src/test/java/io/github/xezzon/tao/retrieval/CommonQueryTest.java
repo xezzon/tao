@@ -46,9 +46,9 @@ class CommonQueryTest {
   }
 }
 
-class CommonQueryTestListener
-    extends io.github.xezzon.tao.retrieval.CommonQueryFilterBaseListener {
+class CommonQueryTestListener extends CommonQueryFilterBaseListener {
 
+  @Override
   public void enterPredicate(PredicateContext ctx) {
     Assertions.assertTrue(
         Arrays.stream(FilterOperatorEnum.values())

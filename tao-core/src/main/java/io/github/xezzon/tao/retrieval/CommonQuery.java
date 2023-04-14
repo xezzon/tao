@@ -104,12 +104,11 @@ public class CommonQuery {
       return null;
     }
     try {
-      io.github.xezzon.tao.retrieval.CommonQueryFilterLexer lexer =
-          new io.github.xezzon.tao.retrieval.CommonQueryFilterLexer(
-              CharStreams.fromString(this.filter)
-          );
+      CommonQueryFilterLexer lexer = new CommonQueryFilterLexer(
+          CharStreams.fromString(this.filter)
+      );
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      return new io.github.xezzon.tao.retrieval.CommonQueryFilterParser(tokens)
+      return new CommonQueryFilterParser(tokens)
           .clause();
     } catch (Exception e) {
       throw uoe(this.filter);
