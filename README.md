@@ -4,7 +4,7 @@
 
 tao 是一组针对 Java Web 开发定义的接口和组件。它向开发者提供了以下接口，并基于这些接口实现了一些常用的功能：
 
-* [通用查询接口](./docs/retrieval.md)
+* [初级查询组件](./docs/retrieval.md)
 * [日志注解](./docs/logger.md)
 * [树形数据结构](./docs/tree.md)
 * [事件总线](./docs/observer.md)
