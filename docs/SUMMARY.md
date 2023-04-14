@@ -9,4 +9,3 @@
   * [事件总线](./observer.md)
   * [NewType 代理接口](./NewType.md)
   * [基础异常类](./exception.md)
-* [维护者指南](../CONTRIBUTING.md)

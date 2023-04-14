@@ -3,10 +3,10 @@ package io.github.xezzon.tao.service;
 import io.github.xezzon.tao.logger.LogRecord;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 class LogServiceTest {
 
-  @Resource
+  @Autowired
   private transient LogService logService;
 
   @Test
