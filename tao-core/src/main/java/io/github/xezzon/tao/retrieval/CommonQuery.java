@@ -9,8 +9,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 通用查询组件 参考 OData 规范
+ * 初级查询组件
  * @author xezzon
+ * @see <a href="https://github.com/microsoft/api-guidelines">Microsoft REST API Guidelines</a>
  */
 public class CommonQuery {
 

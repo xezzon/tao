@@ -1,6 +1,6 @@
-# 通用查询组件
+# 初级查询组件
 
-![通用查询组件示意图.png](assert/common-query.png)
+![初级查询组件示意图.png](assert/common-query.png)
 
 一个非常常见的需求 —— 为列表提供初级搜索功能。为该功能定义了 `CommonQuery` 组件。
 
