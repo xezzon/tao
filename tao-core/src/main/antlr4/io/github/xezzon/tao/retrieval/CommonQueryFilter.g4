@@ -1,9 +1,5 @@
 /* 语法名 */
 grammar CommonQueryFilter;
-/* 头文件 */
-@header {
-  package io.github.xezzon.tao.retrieval;
-}
 /* 词法规则 */
 AND: 'AND';
 OR: 'OR';

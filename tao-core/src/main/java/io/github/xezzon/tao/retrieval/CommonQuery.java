@@ -9,8 +9,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 通用查询组件 参考 OData 规范
+ * 初级查询组件
  * @author xezzon
+ * @see <a href="https://github.com/microsoft/api-guidelines">Microsoft REST API Guidelines</a>
  */
 public class CommonQuery {
 
@@ -103,12 +104,11 @@ public class CommonQuery {
       return null;
     }
     try {
-      io.github.xezzon.tao.retrieval.CommonQueryFilterLexer lexer =
-          new io.github.xezzon.tao.retrieval.CommonQueryFilterLexer(
-              CharStreams.fromString(this.filter)
-          );
+      CommonQueryFilterLexer lexer = new CommonQueryFilterLexer(
+          CharStreams.fromString(this.filter)
+      );
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      return new io.github.xezzon.tao.retrieval.CommonQueryFilterParser(tokens)
+      return new CommonQueryFilterParser(tokens)
           .clause();
     } catch (Exception e) {
       throw uoe(this.filter);

@@ -4,7 +4,7 @@
 
 tao 是一组针对 Java Web 开发定义的接口和组件。它向开发者提供了以下接口，并基于这些接口实现了一些常用的功能：
 
-* [通用查询接口](./docs/retrieval.md)
+* [初级查询组件](./docs/retrieval.md)
 * [日志注解](./docs/logger.md)
 * [树形数据结构](./docs/tree.md)
 * [事件总线](./docs/observer.md)
@@ -30,17 +30,7 @@ tao 是一组针对 Java Web 开发定义的接口和组件。它向开发者提
       <artifactId>tao-spring-boot-starter</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-    <!-- 如果需要JPA扩展 那么添加如下依赖 -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.github.xezzon</groupId>
-      <artifactId>tao-addon-jpa</artifactId>
-      <version>0.2.0</version>
-    </dependency>
-    <!-- 如果仅需要核心包 那么添加如下依赖（添加其他包都会间接引入tao-core） -->
+    <!-- 如果仅需要核心包 那么添加如下依赖（tao-spring-boot-starter 会间接引入 tao-core） -->
     <dependency>
       <groupId>io.github.xezzon</groupId>
       <artifactId>tao-core</artifactId>
