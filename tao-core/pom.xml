@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.github.xezzon</groupId>
     <artifactId>tao</artifactId>
-    <version>0.9.2</version>
+    <version>${revision}</version>
   </parent>
   <artifactId>tao-core</artifactId>
   <packaging>jar</packaging>
