@@ -28,13 +28,13 @@ tao 是一组针对 Java Web 开发定义的接口和组件。它向开发者提
     <dependency>
       <groupId>io.github.xezzon</groupId>
       <artifactId>tao-spring-boot-starter</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.11.0</version>
     </dependency>
     <!-- 如果仅需要核心包 那么添加如下依赖（tao-spring-boot-starter 会间接引入 tao-core） -->
     <dependency>
       <groupId>io.github.xezzon</groupId>
       <artifactId>tao-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.11.0</version>
     </dependency>
   </dependencies>
 </project>
