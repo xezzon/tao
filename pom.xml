@@ -3,7 +3,11 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.github.xezzon</groupId>
+  <parent>
+    <groupId>io.github.xezzon</groupId>
+    <artifactId>xezzon-parent</artifactId>
+    <version>1</version>
+  </parent>
   <artifactId>tao</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
@@ -36,50 +40,18 @@
   </modules>
 
   <properties>
-    <revision>0.10.1</revision>
+    <revision>1.0-SNAPSHOT</revision>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--依赖版本-->
-    <spring-boot.version>2.7.10</spring-boot.version>
-    <spring-cloud.version>2021.0.6</spring-cloud.version>
-    <hutool.version>5.8.16</hutool.version>
-    <jetbrains-annotation.version>24.0.1</jetbrains-annotation.version>
     <antlr.version>4.12.0</antlr.version>
     <!--插件版本-->
-    <maven-source.version>3.2.1</maven-source.version>
-    <maven-javadoc.version>3.4.1</maven-javadoc.version>
-    <maven-gpg.version>3.0.1</maven-gpg.version>
-    <nexus-staging.version>1.6.13</nexus-staging.version>
-    <maven-surefire.version>3.0.0-M5</maven-surefire.version>
     <maven-flatten.version>1.2.7</maven-flatten.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <!--工具类-->
-      <dependency>
-        <groupId>cn.hutool</groupId>
-        <artifactId>hutool-bom</artifactId>
-        <version>${hutool.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <!-- SpringBoot 相关依赖 必须放在最后 -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -87,7 +59,6 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-      <version>${jetbrains-annotation.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -105,54 +76,8 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${maven-source.version}</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven-javadoc.version}</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>${maven-gpg.version}</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <version>${maven-flatten.version}</version>
         <configuration>
           <updatePomFile>true</updatePomFile>
           <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -176,40 +101,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <reporting>
-  </reporting>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-      </properties>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>${nexus-staging.version}</version>
-            <extensions>true</extensions>
-            <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
