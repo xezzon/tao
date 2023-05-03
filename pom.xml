@@ -89,6 +89,9 @@
             <goals>
               <goal>flatten</goal>
             </goals>
+            <configuration>
+              <outputDirectory>target/</outputDirectory>
+            </configuration>
           </execution>
           <execution>
             <id>flatten.clean</id>
