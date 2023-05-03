@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ObserverContext {
 
-  private static final Map<Class<? extends Observation>, Set<Consumer>> OBSERVER_MAP =
+  private static final Map<Class<? extends Observation>, Set<Consumer<Observation>>> OBSERVER_MAP =
       new ConcurrentHashMap<>();
 
   /**
@@ -27,9 +27,10 @@ public class ObserverContext {
       @NotNull Class<T> clazz,
       @NotNull Consumer<T> consumer
   ) {
-    Set<Consumer> observers = OBSERVER_MAP.getOrDefault(clazz,
-        new CopyOnWriteArraySet<>());
-    observers.add(consumer);
+    Set<Consumer<Observation>> observers = OBSERVER_MAP.getOrDefault(
+        clazz, new CopyOnWriteArraySet<>()
+    );
+    observers.add((Consumer<Observation>) consumer);
     OBSERVER_MAP.put(clazz, observers);
   }
 
@@ -39,10 +40,9 @@ public class ObserverContext {
    * @param <T> 消息类型泛型
    */
   public static <T extends Observation> void post(@NotNull T observation) {
-    Set<Consumer> observers = OBSERVER_MAP.getOrDefault(observation.getClass(),
-        Collections.emptySet());
-    observers
-        .parallelStream()
-        .forEach(observer -> observer.accept(observation));
+    Set<Consumer<Observation>> observers = OBSERVER_MAP.getOrDefault(
+        observation.getClass(), Collections.emptySet()
+    );
+    observers.parallelStream().forEach(observer -> observer.accept(observation));
   }
 }
