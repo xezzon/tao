@@ -16,7 +16,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 public class LogInterceptor implements HandlerInterceptor {
 
-  public static final String CATALOG = "catalog";
+  public static final String ENDPOINT = "endpoint";
   public static final String USER_AGENT = "UA";
   public static final String IP = "ip";
 
@@ -42,7 +42,9 @@ public class LogInterceptor implements HandlerInterceptor {
     }
     MDC.put(KeyConstants.SPAN_ID, UUID.randomUUID().toString());
     // 模块
-    MDC.put(CATALOG, request.getRequestURI() + ":" + request.getMethod());
+    MDC.put(ENDPOINT,
+        request.getRequestURI() + ":" + request.getMethod() + "?" + request.getParameterNames()
+    );
     // UA
     MDC.put(USER_AGENT, request.getHeader("User-Agent"));
     // IP
