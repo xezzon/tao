@@ -1,8 +1,11 @@
 package io.github.xezzon.tao.service;
 
 import io.github.xezzon.tao.logger.LogRecord;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +27,12 @@ class LogServiceTest {
 
   @Test
   void log() {
+    final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outputStream));
     logService.log(new User("hello", "world"));
+    Assertions.assertTrue(
+        outputStream.toString().contains("message:{登录: hello; say password: world};")
+    );
   }
 }
 
