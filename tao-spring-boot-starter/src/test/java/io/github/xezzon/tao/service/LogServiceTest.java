@@ -1,6 +1,8 @@
 package io.github.xezzon.tao.service;
 
+import io.github.xezzon.tao.logger.LogDesensitize;
 import io.github.xezzon.tao.logger.LogRecord;
+import io.github.xezzon.tao.util.DesensitizedUtil.MobilePhoneDesensitizer;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -29,9 +31,9 @@ class LogServiceTest {
   void log() {
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outputStream));
-    logService.log(new User("hello", "world"));
-    Assertions.assertTrue(
-        outputStream.toString().contains("message:{登录: hello; say password: world};")
+    logService.log(new User("hello", "world"), "12345678910");
+    Assertions.assertTrue(outputStream.toString()
+        .contains("message:{登录: hello; say password: world; mobile: 123****8910;};")
     );
   }
 }
@@ -54,8 +56,8 @@ class LogService {
     log.debug(value);
   }
 
-  @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}")
-  public void log(User user) {
+  @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}; mobile: #{#mobilePhone};")
+  public void log(User user, @LogDesensitize(MobilePhoneDesensitizer.class) String mobilePhone) {
     log.debug("日志测试");
   }
 
