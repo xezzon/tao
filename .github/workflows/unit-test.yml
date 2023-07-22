@@ -22,5 +22,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'maven'
       - name: Test with Maven
         run: mvn -B test --file pom.xml
