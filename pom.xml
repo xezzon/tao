@@ -37,6 +37,7 @@
   <modules>
     <module>tao-core</module>
     <module>tao-spring-boot-starter</module>
+    <module>micronaut-tao</module>
   </modules>
 
   <properties>
