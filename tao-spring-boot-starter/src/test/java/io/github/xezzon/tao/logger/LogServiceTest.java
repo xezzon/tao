@@ -1,7 +1,5 @@
-package io.github.xezzon.tao.service;
+package io.github.xezzon.tao.logger;
 
-import io.github.xezzon.tao.logger.LogDesensitize;
-import io.github.xezzon.tao.logger.LogRecord;
 import io.github.xezzon.tao.util.DesensitizedUtil.MobilePhoneDesensitizer;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -21,7 +19,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 @SpringBootTest
-@Component
 class LogServiceTest {
 
   @Autowired
