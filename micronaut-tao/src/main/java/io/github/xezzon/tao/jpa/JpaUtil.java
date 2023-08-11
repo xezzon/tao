@@ -1,11 +1,10 @@
 package io.github.xezzon.tao.jpa;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.SimpleExpression;
+import com.querydsl.core.types.dsl.SimplePath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import io.github.xezzon.tao.retrieval.CommonQuery;
@@ -52,8 +51,7 @@ public class JpaUtil {
         .filter(field -> field.getAnnotation(Column.class).updatable())
         .collect(Collectors.toSet());
     for (Field field : fields) {
-      Object column = ReflectUtil.getFieldValue(dataObj, field.getName());
-      Path path = (Path) column;
+      SimplePath path = Expressions.path(dataObj.getClass(), field.getName());
       Object value = ReflectUtil.getFieldValue(obj, field.getName());
       if (field.isAnnotationPresent(DateUpdated.class)) {
         clause.set(path, current);
@@ -61,9 +59,8 @@ public class JpaUtil {
       if (value != null) {
         clause.set(path, value);
       }
-      SimpleExpression expression = (SimpleExpression) column;
       if (field.isAnnotationPresent(Version.class)) {
-        clause.where(expression.eq(value));
+        clause.where(path.eq(value));
       }
     }
     return clause;

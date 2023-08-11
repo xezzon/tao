@@ -737,9 +737,6 @@ class UserDataset {
 
   @EventListener
   public void init(ApplicationStartupEvent event) {
-    if (executeTimes-- <= 0) {
-      return;
-    }
     repository.saveAll(DATASET);
   }
 }
