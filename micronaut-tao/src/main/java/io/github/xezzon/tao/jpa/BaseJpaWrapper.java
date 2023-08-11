@@ -96,16 +96,21 @@ public abstract class BaseJpaWrapper<
   }
 
   protected JPAQuery<T> createQuery(@NotNull Predicate predicate, @NotNull Pageable pageable) {
-    return queryFactory.selectFrom(this.getQuery())
-        .where(predicate)
-        .orderBy(pageable.getOrderBy().stream()
-            .map((orderBy) -> new OrderSpecifier(
-                orderBy.isAscending() ? Order.ASC : Order.DESC,
-                Expressions.path(this.getQuery().getType(), this.getQuery(), orderBy.getProperty())
-            ))
-            .toArray(OrderSpecifier[]::new)
-        )
-        .offset(pageable.getOffset())
-        .limit(pageable.getSize());
+    JPAQuery<T> jpaQuery = queryFactory.selectFrom(this.getQuery());
+    jpaQuery.where(predicate);
+    if (pageable.isSorted()) {
+      jpaQuery.orderBy(pageable.getOrderBy().stream()
+          .map((orderBy) -> new OrderSpecifier(
+              orderBy.isAscending() ? Order.ASC : Order.DESC,
+              Expressions.path(this.getQuery().getType(), this.getQuery(), orderBy.getProperty())
+          ))
+          .toArray(OrderSpecifier[]::new)
+      );
+    }
+    if (!pageable.isUnpaged()) {
+      jpaQuery.offset(pageable.getOffset());
+      jpaQuery.limit(pageable.getSize());
+    }
+    return jpaQuery;
   }
 }
