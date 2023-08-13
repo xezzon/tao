@@ -2,10 +2,10 @@ package io.github.xezzon.tao.jpa;
 
 import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.DateUpdated;
-import io.micronaut.data.annotation.Version;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;

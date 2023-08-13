@@ -693,7 +693,6 @@ enum GenderEnum {
 class UserDataset {
 
   private static final List<User> DATASET = new ArrayList<>();
-  private static int executeTimes = 1;
 
   static {
     for (int i = 0; i < 1000; i++) {
