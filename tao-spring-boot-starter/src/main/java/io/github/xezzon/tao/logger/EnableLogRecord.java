@@ -1,11 +1,8 @@
 package io.github.xezzon.tao.logger;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.*;
 
 /**
  * @author xezzon
@@ -16,4 +13,5 @@ import org.springframework.context.annotation.Import;
 @Import(LogRecordConfig.class)
 public @interface EnableLogRecord {
 
+    boolean global() default false;
 }
