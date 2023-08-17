@@ -1,7 +1,5 @@
 package io.github.xezzon.tao.observer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.github.xezzon.tao.exception.ServerException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

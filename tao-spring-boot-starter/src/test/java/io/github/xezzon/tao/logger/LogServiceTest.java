@@ -1,8 +1,11 @@
-package io.github.xezzon.tao.service;
+package io.github.xezzon.tao.logger;
 
-import io.github.xezzon.tao.logger.LogRecord;
+import io.github.xezzon.tao.util.DesensitizedUtil.MobilePhoneDesensitizer;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +19,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 @SpringBootTest
-@Component
 class LogServiceTest {
 
   @Autowired
@@ -24,7 +26,12 @@ class LogServiceTest {
 
   @Test
   void log() {
-    logService.log(new User("hello", "world"));
+    final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outputStream));
+    logService.log(new User("hello", "world"), "12345678910");
+    Assertions.assertTrue(outputStream.toString()
+        .contains("message:{登录: hello; say password: world; mobile: 123****8910;};")
+    );
   }
 }
 
@@ -46,8 +53,8 @@ class LogService {
     log.debug(value);
   }
 
-  @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}")
-  public void log(User user) {
+  @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}; mobile: #{#mobilePhone};")
+  public void log(User user, @LogDesensitize(MobilePhoneDesensitizer.class) String mobilePhone) {
     log.debug("日志测试");
   }
 

@@ -1,9 +1,10 @@
-package io.github.xezzon.tao.manager;
+package io.github.xezzon.tao.data;
 
 /**
  * 全局 ID 生成器
  * @author xezzon
  */
+@FunctionalInterface
 public interface IdGenerator {
 
   /**
