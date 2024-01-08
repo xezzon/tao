@@ -1,5 +1,7 @@
 package io.github.xezzon.tao.web;
 
+import io.github.xezzon.tao.exception.BaseException;
+
 /**
  * @author xezzon
  */
@@ -38,12 +40,26 @@ public class Result<T> {
     return new Result<>(SUCCESS_CODE, null, data);
   }
 
+  @Deprecated
   public static <T> Result<T> fail(String code, String message) {
     return new Result<>(code, message, null);
   }
 
+  @Deprecated
   public static <T> Result<T> fail(String code, String message, T data) {
     return new Result<>(code, message, data);
+  }
+
+  public static <T> Result<T> fail(BaseException e) {
+    return new Result<>(e.getCode(), e.getMessage(), null);
+  }
+
+  public static <T> Result<T> fail(BaseException e, String message) {
+    return new Result<>(e.getCode(), message, null);
+  }
+
+  public static <T> Result<T> fail(BaseException e, String message, T data) {
+    return new Result<>(e.getCode(), message, data);
   }
 
   public String getCode() {
