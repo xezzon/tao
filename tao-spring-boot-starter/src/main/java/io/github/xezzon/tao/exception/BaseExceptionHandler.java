@@ -28,7 +28,7 @@ public class BaseExceptionHandler {
   @ExceptionHandler(ClientException.class)
   @ResponseStatus(code = HttpStatus.BAD_REQUEST)
   public Result<Void> handleClientException(ClientException e) {
-    return Result.fail(e.getCode(), e.getMessage());
+    return Result.fail(e);
   }
 
   /**
@@ -37,7 +37,7 @@ public class BaseExceptionHandler {
   @ExceptionHandler(ServerException.class)
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
   public Result<Void> handleServerException(ServerException e) {
-    return Result.fail(e.getCode(), errorMessage);
+    return Result.fail(e, errorMessage);
   }
 
   /**
@@ -46,7 +46,7 @@ public class BaseExceptionHandler {
   @ExceptionHandler(ThirdPartyException.class)
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
   public Result<Void> handleThirdPartyException(ThirdPartyException e) {
-    return Result.fail(e.getCode(), errorMessage);
+    return Result.fail(e, errorMessage);
   }
 
   /**
@@ -54,6 +54,7 @@ public class BaseExceptionHandler {
    */
   @ExceptionHandler(MultiException.class)
   @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+  @Deprecated
   public Result<?> handleMultiException(MultiException e) {
     return Result.fail(e.getCode(), errorMessage, e.getMessages());
   }

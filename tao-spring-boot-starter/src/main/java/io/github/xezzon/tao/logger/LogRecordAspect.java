@@ -1,7 +1,6 @@
 package io.github.xezzon.tao.logger;
 
 import io.github.xezzon.tao.exception.BaseException;
-import io.github.xezzon.tao.exception.MultiException;
 import io.github.xezzon.tao.util.DesensitizedUtil;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -37,7 +36,8 @@ public class LogRecordAspect {
     /* 获取切面签名 */
     EvaluationContext evaluationContext = new StandardEvaluationContext(pjp.getTarget());
     MethodSignature signature = (MethodSignature) pjp.getSignature();
-    String[] parameterNames = signature.getParameterNames();
+    String[] parameterNames = Optional.ofNullable(signature.getParameterNames())
+        .orElse(new String[0]);
     Object[] args = pjp.getArgs();
     /* 获取参数注解以判断是否存在脱敏字段 */
     Method method = signature.getMethod();
@@ -84,7 +84,7 @@ public class LogRecordAspect {
       );
 
       return ret;
-    } catch (BaseException | MultiException e) {
+    } catch (BaseException e) {
       Instant endTime = Instant.now();
       logger.warn(
           LOG_MESSAGE_FORMAT,

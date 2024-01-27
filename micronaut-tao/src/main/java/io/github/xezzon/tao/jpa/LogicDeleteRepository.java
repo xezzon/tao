@@ -3,7 +3,7 @@ package io.github.xezzon.tao.jpa;
 import io.micronaut.data.jpa.repository.JpaRepository;
 import io.micronaut.transaction.annotation.Transactional;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -22,7 +22,7 @@ public interface LogicDeleteRepository<T extends BaseEntity<ID>, ID extends Seri
     if (entity.isEmpty()) {
       return;
     }
-    entity.get().setDeleteTime(LocalDateTime.now());
+    entity.get().setDeleteTime(Instant.now());
     update(entity.get());
   };
 }

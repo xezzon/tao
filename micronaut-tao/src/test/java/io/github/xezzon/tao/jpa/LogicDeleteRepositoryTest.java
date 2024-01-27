@@ -75,9 +75,9 @@ class DictDataset {
 
   static {
     for (int i = 0; i < 1000; i++) {
-      Dict user = new Dict();
-      user.setId(IdUtil.getSnowflakeNextIdStr());
-      user.setName(RandomUtil.randomString(6));
+      Dict user = new Dict()
+        .setName(RandomUtil.randomString(6))
+        .setId(IdUtil.getSnowflakeNextIdStr());
       DATASET.add(user);
     }
   }
