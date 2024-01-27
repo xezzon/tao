@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get Tag
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "version=${TAG}" >> "$GITHUB_ENV"
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -36,7 +41,7 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
 
       - name: Publish to Apache Maven Central
-        run: mvn deploy -P report,release -DskipTests=true -Drevision=$GITHUB_REF
+        run: mvn deploy -P report,release -DskipTests=true -Drevision=$version
         env:
           MAVEN_USERNAME: ${{ vars.MAVEN_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
