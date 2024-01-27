@@ -35,11 +35,8 @@ jobs:
           server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
 
-      - name: Set Version
-        run: mvn versions:set -DnewVersion=$GITHUB_REF
-
       - name: Publish to Apache Maven Central
-        run: mvn deploy -P report,release -DskipTests=true
+        run: mvn deploy -P report,release -DskipTests=true -Drevision=$GITHUB_REF
         env:
           MAVEN_USERNAME: ${{ vars.MAVEN_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
