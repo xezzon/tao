@@ -6,6 +6,7 @@ import java.util.Collection;
  * 多消息异常
  * @author xezzon
  */
+@Deprecated
 public class MultiException extends RuntimeException {
 
   @java.io.Serial

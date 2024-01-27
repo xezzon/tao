@@ -1,8 +1,6 @@
 package io.github.xezzon.tao.web;
 
-import static io.github.xezzon.tao.constant.KeyConstants.TRACE_ID;
-
-import org.slf4j.MDC;
+import io.github.xezzon.tao.exception.BaseException;
 
 /**
  * @author xezzon
@@ -23,36 +21,45 @@ public class Result<T> {
    * 负载数据
    */
   private T data;
-  /**
-   * 请求追踪号
-   */
-  private String requestId;
 
   public Result() {
     super();
   }
 
-  private Result(String code, String message, T data, String requestId) {
+  private Result(String code, String message, T data) {
     this.code = code;
     this.message = message;
     this.data = data;
-    this.requestId = requestId;
   }
 
   public static <T> Result<T> succeed() {
-    return new Result<>(SUCCESS_CODE, SUCCESS_MESSAGE, null, null);
+    return new Result<>(SUCCESS_CODE, SUCCESS_MESSAGE, null);
   }
 
   public static <T> Result<T> succeed(T data) {
-    return new Result<>(SUCCESS_CODE, null, data, null);
+    return new Result<>(SUCCESS_CODE, null, data);
   }
 
+  @Deprecated
   public static <T> Result<T> fail(String code, String message) {
-    return new Result<>(code, message, null, MDC.get(TRACE_ID));
+    return new Result<>(code, message, null);
   }
 
+  @Deprecated
   public static <T> Result<T> fail(String code, String message, T data) {
-    return new Result<>(code, message, data, MDC.get(TRACE_ID));
+    return new Result<>(code, message, data);
+  }
+
+  public static <T> Result<T> fail(BaseException e) {
+    return new Result<>(e.getCode(), e.getMessage(), null);
+  }
+
+  public static <T> Result<T> fail(BaseException e, String message) {
+    return new Result<>(e.getCode(), message, null);
+  }
+
+  public static <T> Result<T> fail(BaseException e, String message, T data) {
+    return new Result<>(e.getCode(), message, data);
   }
 
   public String getCode() {
@@ -65,9 +72,5 @@ public class Result<T> {
 
   public T getData() {
     return data;
-  }
-
-  public String getRequestId() {
-    return requestId;
   }
 }
