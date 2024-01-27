@@ -22,10 +22,14 @@ import io.github.xezzon.tao.retrieval.CommonQueryFilterParser.OrLogicContext;
 import io.github.xezzon.tao.retrieval.CommonQueryFilterParser.ParenthesisContext;
 import io.github.xezzon.tao.retrieval.CommonQueryFilterParser.PredicateContext;
 import io.github.xezzon.tao.retrieval.FilterOperatorEnum;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -75,9 +79,9 @@ class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
       String rawOperator = ctx.OP().getText();
       String rawValue = ctx.VALUE().getText();
       /* 解析字段 */
-      SimpleExpression<?> field =
+      SimpleExpression<?> column =
           (SimpleExpression<?>) ReflectUtil.getFieldValue(dataObj, rawField);
-      if (field == null) {
+      if (column == null) {
         throw nonexistentField(ctx.getText());
       }
       /* 解析操作符 */
@@ -85,15 +89,15 @@ class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
       // 空操作符单独处理
       if (op == FilterOperatorEnum.NULL) {
         if (Boolean.parseBoolean(rawValue)) {
-          return field.isNull();
+          return column.isNull();
         } else {
-          return field.isNotNull();
+          return column.isNotNull();
         }
       }
       /* 解析值 */
       rawValue = StrUtil.strip(rawValue, "'");
       /* 组装查询语句 */
-      if (field instanceof StringPath f) {
+      if (column instanceof StringPath f) {
         return switch (op) {
           case EQ -> f.eq(rawValue);
           case NE -> f.ne(rawValue);
@@ -102,61 +106,76 @@ class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
           case OUT -> f.notIn(StrUtil.split(rawValue, ","));
           default -> throw unsupportedOperator(ctx.getText());
         };
-      } else if (field instanceof EnumPath<?> f) {
+      } else if (column instanceof EnumPath f) {
         Class<Enum> enumClazz = (Class<Enum>) ReflectUtil.getField(this.clazz, rawField).getType();
-        Set<Enum> values = StrUtil.split(rawValue, ",").parallelStream()
+        Set<Enum> values = Arrays.stream(rawValue.split(",")).parallel()
             .map(o -> Enum.valueOf(enumClazz, o))
             .collect(Collectors.toSet());
         return switch (op) {
-          case EQ, IN -> ReflectUtil.invoke(f, "in", values);
-          case NE, OUT -> ReflectUtil.invoke(f, "notIn", values);
+          case EQ, IN -> f.in(values);
+          case NE, OUT -> f.notIn(values);
           default -> throw unsupportedOperator(ctx.getText());
         };
-      } else if (field instanceof NumberPath<?> f) {
+      } else if (column instanceof NumberPath f) {
         BigDecimal value = new BigDecimal(rawValue);
         return switch (op) {
-          case EQ -> ReflectUtil.invoke(f, "eq", value);
-          case NE -> ReflectUtil.invoke(f, "ne", value);
+          case EQ -> f.eq(value);
+          case NE -> f.ne(value);
           case GT -> f.gt(value);
           case LT -> f.lt(value);
           case GE -> f.goe(value);
           case LE -> f.loe(value);
           default -> throw unsupportedOperator(ctx.getText());
         };
-      } else if (field instanceof DateTimePath<?> f) {
-        LocalDateTime value = LocalDateTime.parse(rawValue);
-        return switch (op) {
-          case EQ -> ReflectUtil.invoke(f, "eq", value);
-          case NE -> ReflectUtil.invoke(f, "ne", value);
-          case GT -> ReflectUtil.invoke(f, "gt", value);
-          case LT -> ReflectUtil.invoke(f, "lt", value);
-          case GE -> ReflectUtil.invoke(f, "goe", value);
-          case LE -> ReflectUtil.invoke(f, "loe", value);
-          default -> throw unsupportedOperator(ctx.getText());
-        };
-      } else if (field instanceof DatePath<?> f) {
+      } else if (column instanceof DateTimePath f) {
+        Field field = clazz.getDeclaredField(rawField);
+        if (Objects.equals(field.getType(), LocalDateTime.class)) {
+          LocalDateTime value = LocalDateTime.parse(rawValue);
+          return switch (op) {
+            case EQ -> f.eq(value);
+            case NE -> f.ne(value);
+            case GT -> f.gt(value);
+            case LT -> f.lt(value);
+            case GE -> f.goe(value);
+            case LE -> f.loe(value);
+            default -> throw unsupportedOperator(ctx.getText());
+          };
+        } else if (Objects.equals(field.getType(), Instant.class)) {
+          Instant value = Instant.parse(rawValue);
+          return switch (op) {
+            case EQ -> f.eq(value);
+            case NE -> f.ne(value);
+            case GT -> f.gt(value);
+            case LT -> f.lt(value);
+            case GE -> f.goe(value);
+            case LE -> f.loe(value);
+            default -> throw unsupportedOperator(ctx.getText());
+          };
+        }
+        throw uoe(ctx.getText());
+      } else if (column instanceof DatePath f) {
         LocalDate value = LocalDate.parse(rawValue);
         return switch (op) {
-          case EQ -> ReflectUtil.invoke(f, "eq", value);
-          case NE -> ReflectUtil.invoke(f, "ne", value);
-          case GT -> ReflectUtil.invoke(f, "gt", value);
-          case LT -> ReflectUtil.invoke(f, "lt", value);
-          case GE -> ReflectUtil.invoke(f, "goe", value);
-          case LE -> ReflectUtil.invoke(f, "loe", value);
+          case EQ -> f.eq(value);
+          case NE -> f.ne(value);
+          case GT -> f.gt(value);
+          case LT -> f.lt(value);
+          case GE -> f.goe(value);
+          case LE -> f.loe(value);
           default -> throw unsupportedOperator(ctx.getText());
         };
-      } else if (field instanceof TimePath<?> f) {
+      } else if (column instanceof TimePath f) {
         LocalTime value = LocalTime.parse(rawValue);
         return switch (op) {
-          case EQ -> ReflectUtil.invoke(f, "eq", value);
-          case NE -> ReflectUtil.invoke(f, "ne", value);
-          case GT -> ReflectUtil.invoke(f, "gt", value);
-          case LT -> ReflectUtil.invoke(f, "lt", value);
-          case GE -> ReflectUtil.invoke(f, "goe", value);
-          case LE -> ReflectUtil.invoke(f, "loe", value);
+          case EQ -> f.eq(value);
+          case NE -> f.ne(value);
+          case GT -> f.gt(value);
+          case LT -> f.lt(value);
+          case GE -> f.goe(value);
+          case LE -> f.loe(value);
           default -> throw unsupportedOperator(ctx.getText());
         };
-      } else if (field instanceof BooleanPath f) {
+      } else if (column instanceof BooleanPath f) {
         boolean value = Boolean.parseBoolean(rawValue);
         return switch (op) {
           case EQ -> f.eq(value);
