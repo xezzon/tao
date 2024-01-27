@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jpa.version>3.1.0</jpa.version>
     <lombok.version>1.18.24</lombok.version>
+    <micronaut.data.version>4.3.1</micronaut.data.version>
   </properties>
 
   <dependencyManagement>
@@ -134,7 +135,7 @@
             <path>
               <groupId>io.micronaut.data</groupId>
               <artifactId>micronaut-data-processor</artifactId>
-              <version>${micronaut.version}</version>
+              <version>${micronaut.data.version}</version>
               <exclusions>
                 <exclusion>
                   <groupId>io.micronaut</groupId>

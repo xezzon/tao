@@ -36,7 +36,8 @@ public class LogRecordAspect {
     /* 获取切面签名 */
     EvaluationContext evaluationContext = new StandardEvaluationContext(pjp.getTarget());
     MethodSignature signature = (MethodSignature) pjp.getSignature();
-    String[] parameterNames = signature.getParameterNames();
+    String[] parameterNames = Optional.ofNullable(signature.getParameterNames())
+        .orElse(new String[0]);
     Object[] args = pjp.getArgs();
     /* 获取参数注解以判断是否存在脱敏字段 */
     Method method = signature.getMethod();

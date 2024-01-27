@@ -24,4 +24,4 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Test with Maven
-        run: mvn -B test --file pom.xml
+        run: mvn -B test -P test --file pom.xml
