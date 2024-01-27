@@ -70,6 +70,10 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-core</artifactId>
       <optional>true</optional>

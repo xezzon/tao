@@ -5,7 +5,7 @@
 demo 如下:
 
 ```java
-public void TemplateService {
+public class TemplateService {
   
   @Resource
   private OssService ossService;
@@ -17,9 +17,9 @@ public void TemplateService {
           ossService.save(template);
           return Result.ok(null);
         } catch (BaseException e) {
-          return Result.err(e)
+          return Result.err(e);
         }
-      })
+      });
     // 处理 result
   }
 }

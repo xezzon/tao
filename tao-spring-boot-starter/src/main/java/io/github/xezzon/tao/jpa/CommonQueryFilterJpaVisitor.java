@@ -5,7 +5,8 @@ import static io.github.xezzon.tao.retrieval.CommonQuery.unsupportedOperator;
 import static io.github.xezzon.tao.retrieval.CommonQuery.uoe;
 
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.core.types.dsl.DatePath;
@@ -95,15 +96,15 @@ class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
         }
       }
       /* 解析值 */
-      rawValue = StrUtil.strip(rawValue, "'");
+      rawValue = CharMatcher.anyOf("'").trimFrom(rawValue);
       /* 组装查询语句 */
       if (column instanceof StringPath f) {
         return switch (op) {
           case EQ -> f.eq(rawValue);
           case NE -> f.ne(rawValue);
           case LLIKE -> f.startsWith(rawValue);
-          case IN -> f.in(StrUtil.split(rawValue, ","));
-          case OUT -> f.notIn(StrUtil.split(rawValue, ","));
+          case IN -> f.in(Splitter.on(",").splitToList(rawValue));
+          case OUT -> f.notIn(Splitter.on(",").splitToList(rawValue));
           default -> throw unsupportedOperator(ctx.getText());
         };
       } else if (column instanceof EnumPath f) {

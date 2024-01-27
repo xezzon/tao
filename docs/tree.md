@@ -5,8 +5,6 @@
 ## Example
 
 ```java
-import cn.hutool.core.lang.tree.Tree;
-import domain.io.github.xezzon.tao.TreeNode;
 import java.util.Collection;
 import java.util.List;
 

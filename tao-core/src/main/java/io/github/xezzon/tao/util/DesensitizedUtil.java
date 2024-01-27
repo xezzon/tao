@@ -1,13 +1,12 @@
 package io.github.xezzon.tao.util;
 
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import io.github.xezzon.tao.desensitize.Desensitizer;
 
 public class DesensitizedUtil extends cn.hutool.core.util.DesensitizedUtil {
 
   public static String desensitized(CharSequence str, Desensitizer desensitizer) {
-    if (StrUtil.isBlank(str)) {
+    if (str == null || String.valueOf(str).isBlank()) {
       return "";
     }
     return desensitizer.desensitize(String.valueOf(str));

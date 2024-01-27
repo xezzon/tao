@@ -2,7 +2,7 @@ package io.github.xezzon.tao.jpa;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
+import com.google.common.base.Joiner;
 import io.github.xezzon.tao.retrieval.CommonQuery;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
@@ -180,7 +180,7 @@ class JpaWrapperTest {
         .map(User::getId)
         .collect(Collectors.toSet());
     CommonQuery inQuery = new CommonQuery();
-    inQuery.setFilter(String.format("id IN '%s'", StrUtil.join(",", exceptId)));
+    inQuery.setFilter(String.format("id IN '%s'", Joiner.on(",").join(exceptId)));
     Page<User> inPage = userDAO.query(inQuery);
     Assertions.assertEquals(
         UserDataset.getDataset().parallelStream()
@@ -190,7 +190,7 @@ class JpaWrapperTest {
     );
 
     CommonQuery outQuery = new CommonQuery();
-    outQuery.setFilter(String.format("id OUT '%s'", StrUtil.join(",", exceptId)));
+    outQuery.setFilter(String.format("id OUT '%s'", Joiner.on(",").join(exceptId)));
     Page<User> outPage = userDAO.query(outQuery);
     Assertions.assertEquals(
         UserDataset.getDataset().parallelStream()

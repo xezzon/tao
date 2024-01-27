@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.logger;
 
-import cn.hutool.core.net.NetUtil;
 import io.github.xezzon.tao.constant.KeyConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,7 +53,7 @@ public class LogInterceptor implements HandlerInterceptor {
             "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR")
         .parallel()
         .map(request::getHeader)
-        .filter(o -> !NetUtil.isUnknown(o))
+        .filter(o -> !"unknown".equals(o))
         .findFirst()
         .orElse(request.getRemoteAddr());
     MDC.put(IP, ip);
