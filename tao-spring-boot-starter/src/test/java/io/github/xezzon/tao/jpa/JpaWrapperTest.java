@@ -1,38 +1,28 @@
 package io.github.xezzon.tao.jpa;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import io.github.xezzon.tao.jpa.user.GenderEnum;
+import io.github.xezzon.tao.jpa.user.User;
+import io.github.xezzon.tao.jpa.user.UserDAO;
+import io.github.xezzon.tao.jpa.user.UserDataset;
 import io.github.xezzon.tao.retrieval.CommonQuery;
-import jakarta.annotation.Resource;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -345,6 +335,90 @@ class JpaWrapperTest {
   }
 
   @Test
+  void query_instant() {
+    // yyyy-MM-ddTHH:mm:ss
+    Instant exceptDateTime = UserDataset.getDataset().parallelStream()
+        .findAny()
+        .get()
+        .getCreateTime();
+
+    CommonQuery eqQuery = new CommonQuery();
+    eqQuery.setFilter(String.format(
+        "createTime EQ '%s'",
+        exceptDateTime
+    ));
+    Page<User> eqPage = userDAO.query(eqQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> Objects.equals(user.getCreateTime(), exceptDateTime))
+            .count(),
+        eqPage.getTotalElements()
+    );
+
+    CommonQuery neQuery = new CommonQuery();
+    neQuery.setFilter(String.format(
+        "createTime NE '%s'",
+        exceptDateTime
+    ));
+    Page<User> nePage = userDAO.query(neQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> !Objects.equals(user.getCreateTime(), exceptDateTime))
+            .count(),
+        nePage.getTotalElements()
+    );
+
+    CommonQuery gtQuery = new CommonQuery();
+    gtQuery.setFilter(String.format(
+        "createTime GT '%s'",
+        exceptDateTime
+    ));
+    Page<User> gtPage = userDAO.query(gtQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> user.getCreateTime().isAfter(exceptDateTime))
+            .count(),
+        gtPage.getTotalElements()
+    );
+
+    CommonQuery ltQuery = new CommonQuery();
+    ltQuery.setFilter(String.format(
+        "createTime LT '%s'", exceptDateTime
+    ));
+    Page<User> ltPage = userDAO.query(ltQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> user.getCreateTime().isBefore(exceptDateTime))
+            .count(),
+        ltPage.getTotalElements()
+    );
+
+    CommonQuery geQuery = new CommonQuery();
+    geQuery.setFilter(String.format(
+        "createTime GE '%s'", exceptDateTime
+    ));
+    Page<User> gePage = userDAO.query(geQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> !user.getCreateTime().isBefore(exceptDateTime))
+            .count(),
+        gePage.getTotalElements()
+    );
+
+    CommonQuery leQuery = new CommonQuery();
+    leQuery.setFilter(String.format(
+        "createTime LE '%s'", exceptDateTime
+    ));
+    Page<User> lePage = userDAO.query(leQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> !user.getCreateTime().isAfter(exceptDateTime))
+            .count(),
+        lePage.getTotalElements()
+    );
+  }
+
+  @Test
   void query_datetime() {
     // yyyy-MM-ddTHH:mm:ss
     LocalDateTime exceptDateTime = UserDataset.getDataset().parallelStream()
@@ -642,133 +716,3 @@ class JpaWrapperTest {
   }
 }
 
-@Getter
-@Setter
-@ToString
-@Entity
-@Table(name = "t_user")
-class User {
-
-  @Id
-  @Column
-  private String id;
-  @Column(nullable = false)
-  private String name;
-  @Column
-  private Integer age;
-  @Column(precision = 13, scale = 9)
-  private BigDecimal credit;
-  @Column(updatable = false)
-  private GenderEnum gender;
-  @Column
-  private LocalDateTime deleteDateTime;
-  @Column
-  private Boolean deleted;
-  @Column
-  private LocalDate deleteDate;
-  @Column
-  private LocalTime deleteTime;
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    User user = (User) o;
-    return Objects.equals(id, user.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
-  }
-}
-
-enum GenderEnum {
-  MALE,
-  FEMALE,
-  UNKNOWN,
-  ;
-}
-
-@Component
-class UserDataset implements CommandLineRunner {
-
-  private static final List<User> DATASET = new ArrayList<>();
-  private static int executeTimes = 1;
-
-  static {
-    for (int i = 0; i < 1000; i++) {
-      User user = new User();
-      user.setId(IdUtil.getSnowflakeNextIdStr());
-      user.setName(RandomUtil.randomString(6));
-      user.setAge(RandomUtil.randomInt(6, 60));
-      user.setCredit(RandomUtil.randomBigDecimal(new BigDecimal("100.000")));
-      user.setGender(RandomUtil.randomEle(GenderEnum.values()));
-      user.setDeleteDateTime(RandomUtil.randomBoolean() ?
-          LocalDateTime.of(
-              RandomUtil.randomInt(2000, 2999),
-              RandomUtil.randomInt(1, 11),
-              RandomUtil.randomInt(1, 27),
-              RandomUtil.randomInt(1, 11),
-              RandomUtil.randomInt(1, 59),
-              RandomUtil.randomInt(1, 59)
-          ) : null
-      );
-      user.setDeleted(user.getDeleteDateTime() != null);
-      user.setDeleteDate(
-          user.getDeleteDateTime() == null
-              ? null
-              : user.getDeleteDateTime().toLocalDate()
-      );
-      user.setDeleteTime(
-          user.getDeleteDateTime() == null
-              ? null
-              : user.getDeleteDateTime().toLocalTime()
-      );
-      DATASET.add(user);
-    }
-  }
-
-  public static List<User> getDataset() {
-    return new ArrayList<>(DATASET);
-  }
-
-  @Resource
-  private transient UserRepository repository;
-
-  @Override
-  public void run(String... args) {
-    if (executeTimes-- <= 0) {
-      return;
-    }
-    repository.saveAllAndFlush(DATASET);
-  }
-}
-
-@Repository
-interface UserRepository extends JpaRepository<User, String>, QuerydslPredicateExecutor<User> {
-
-}
-
-@Repository
-class UserDAO extends BaseJpaWrapper<User, QUser, UserRepository> {
-
-
-  protected UserDAO(UserRepository dao) {
-    super(dao);
-  }
-
-  @Override
-  protected QUser getQuery() {
-    return QUser.user;
-  }
-
-  @Override
-  protected Class<User> getBeanClass() {
-    return User.class;
-  }
-}

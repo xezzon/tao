@@ -12,7 +12,7 @@ import io.github.xezzon.tao.retrieval.CommonQuery;
 import jakarta.persistence.Column;
 import jakarta.persistence.Version;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +47,7 @@ public class JpaUtil {
       EntityPathBase<T> dataObj
   ) {
     JPAUpdateClause clause = queryFactory.update(dataObj);
-    LocalDateTime current = LocalDateTime.now();
+    Instant current = Instant.now();
     Set<Field> fields = Arrays.stream(obj.getClass().getDeclaredFields())
         .filter(field -> Objects.nonNull(field.getAnnotation(Column.class)))
         .filter(field -> field.getAnnotation(Column.class).updatable())
