@@ -1,7 +1,6 @@
 package io.github.xezzon.tao.logger;
 
 import io.github.xezzon.tao.exception.BaseException;
-import io.github.xezzon.tao.exception.MultiException;
 import io.github.xezzon.tao.util.DesensitizedUtil;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -84,7 +83,7 @@ public class LogRecordAspect {
       );
 
       return ret;
-    } catch (BaseException | MultiException e) {
+    } catch (BaseException e) {
       Instant endTime = Instant.now();
       logger.warn(
           LOG_MESSAGE_FORMAT,

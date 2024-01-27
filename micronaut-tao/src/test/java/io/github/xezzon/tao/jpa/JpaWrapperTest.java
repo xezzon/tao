@@ -17,9 +17,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -340,6 +342,90 @@ class JpaWrapperTest {
   }
 
   @Test
+  void query_instant() {
+    // yyyy-MM-ddTHH:mm:ss
+    Instant exceptDateTime = UserDataset.getDataset().parallelStream()
+        .findAny()
+        .get()
+        .getCreateTime();
+
+    CommonQuery eqQuery = new CommonQuery();
+    eqQuery.setFilter(String.format(
+        "createTime EQ '%s'",
+        exceptDateTime
+    ));
+    Page<User> eqPage = userDAO.query(eqQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> Objects.equals(user.getCreateTime(), exceptDateTime))
+            .count(),
+        eqPage.getTotalSize()
+    );
+
+    CommonQuery neQuery = new CommonQuery();
+    neQuery.setFilter(String.format(
+        "createTime NE '%s'",
+        exceptDateTime
+    ));
+    Page<User> nePage = userDAO.query(neQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> !Objects.equals(user.getCreateTime(), exceptDateTime))
+            .count(),
+        nePage.getTotalSize()
+    );
+
+    CommonQuery gtQuery = new CommonQuery();
+    gtQuery.setFilter(String.format(
+        "createTime GT '%s'",
+        exceptDateTime
+    ));
+    Page<User> gtPage = userDAO.query(gtQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> user.getCreateTime().isAfter(exceptDateTime))
+            .count(),
+        gtPage.getTotalSize()
+    );
+
+    CommonQuery ltQuery = new CommonQuery();
+    ltQuery.setFilter(String.format(
+        "createTime LT '%s'", exceptDateTime
+    ));
+    Page<User> ltPage = userDAO.query(ltQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> user.getCreateTime().isBefore(exceptDateTime))
+            .count(),
+        ltPage.getTotalSize()
+    );
+
+    CommonQuery geQuery = new CommonQuery();
+    geQuery.setFilter(String.format(
+        "createTime GE '%s'", exceptDateTime
+    ));
+    Page<User> gePage = userDAO.query(geQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> !user.getCreateTime().isBefore(exceptDateTime))
+            .count(),
+        gePage.getTotalSize()
+    );
+
+    CommonQuery leQuery = new CommonQuery();
+    leQuery.setFilter(String.format(
+        "createTime LE '%s'", exceptDateTime
+    ));
+    Page<User> lePage = userDAO.query(leQuery);
+    Assertions.assertEquals(
+        UserDataset.getDataset().parallelStream()
+            .filter(user -> !user.getCreateTime().isAfter(exceptDateTime))
+            .count(),
+        lePage.getTotalSize()
+    );
+  }
+
+  @Test
   void query_datetime() {
     // yyyy-MM-ddTHH:mm:ss
     LocalDateTime exceptDateTime = UserDataset.getDataset().parallelStream()
@@ -655,6 +741,8 @@ class User {
   private BigDecimal credit;
   @Column(updatable = false)
   private GenderEnum gender;
+  @Column(updatable = false)
+  private Instant createTime;
   @Column
   private LocalDateTime deleteDateTime;
   @Column
@@ -702,6 +790,10 @@ class UserDataset {
       user.setAge(RandomUtil.randomInt(6, 60));
       user.setCredit(RandomUtil.randomBigDecimal(new BigDecimal("100.000")));
       user.setGender(RandomUtil.randomEle(GenderEnum.values()));
+      user.setCreateTime(Instant.EPOCH.plus(
+          RandomUtil.randomLong(365 * 30, 365 * 300),
+          ChronoUnit.DAYS
+      ));
       user.setDeleteDateTime(RandomUtil.randomBoolean() ?
           LocalDateTime.of(
               RandomUtil.randomInt(2000, 2999),

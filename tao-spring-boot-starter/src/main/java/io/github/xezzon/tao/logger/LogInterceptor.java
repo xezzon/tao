@@ -13,7 +13,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /**
  * 日志拦截器
  * @author xezzon
+ * @deprecated 请使用Trace替代
  */
+@Deprecated
 public class LogInterceptor implements HandlerInterceptor {
 
   public static final String ENDPOINT = "endpoint";

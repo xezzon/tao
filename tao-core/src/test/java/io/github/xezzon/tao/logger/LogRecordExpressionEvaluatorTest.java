@@ -1,7 +1,9 @@
 package io.github.xezzon.tao.logger;
 
 import cn.hutool.core.util.RandomUtil;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.expression.EvaluationContext;
@@ -16,8 +18,11 @@ class LogRecordExpressionEvaluatorTest {
 
   @Test
   void evaluate() {
-    LocalDateTime time = LocalDateTime.of(2023, 4, 13, 15, 18, 33);
-    String expression = "用户 #{#user.username} 于 #{T(java.time.LocalDateTime).of(2023, 4, 13, 15, 18, 33).toString()} 登录";
+    Instant time = LocalDateTime.of(2023, 4, 13, 15, 18, 33).toInstant(ZoneOffset.UTC);
+    Instant.from(time);
+    String expression = """
+        用户 #{#user.username} 于 #{T(java.time.Instant).parse("2023-04-13T15:18:33Z").toString()} 登录
+    """.trim();
     EvaluationContext context = new StandardEvaluationContext();
     String username = RandomUtil.randomString(RandomUtil.randomNumber());
     User user = new User(username);
