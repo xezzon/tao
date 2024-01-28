@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.jpa;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.base.Joiner;
 import io.github.xezzon.tao.retrieval.CommonQuery;
@@ -28,6 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
@@ -785,7 +785,7 @@ class UserDataset {
   static {
     for (int i = 0; i < 1000; i++) {
       User user = new User();
-      user.setId(IdUtil.getSnowflakeNextIdStr());
+      user.setId(UUID.randomUUID().toString());
       user.setName(RandomUtil.randomString(6));
       user.setAge(RandomUtil.randomInt(6, 60));
       user.setCredit(RandomUtil.randomBigDecimal(new BigDecimal("100.000")));

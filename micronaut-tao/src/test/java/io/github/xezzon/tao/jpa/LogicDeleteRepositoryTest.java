@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.jpa;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.Repository;
@@ -16,6 +15,7 @@ import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -77,7 +77,7 @@ class DictDataset {
     for (int i = 0; i < 1000; i++) {
       Dict user = new Dict()
         .setName(RandomUtil.randomString(6))
-        .setId(IdUtil.getSnowflakeNextIdStr());
+        .setId(UUID.randomUUID().toString());
       DATASET.add(user);
     }
   }

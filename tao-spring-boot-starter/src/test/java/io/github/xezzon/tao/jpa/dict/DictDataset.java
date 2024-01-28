@@ -1,10 +1,10 @@
 package io.github.xezzon.tao.jpa.dict;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class DictDataset implements CommandLineRunner {
     for (int i = 0; i < 1000; i++) {
       Dict user = new Dict()
           .setName(RandomUtil.randomString(6))
-          .setId(IdUtil.getSnowflakeNextIdStr());
+          .setId(UUID.randomUUID().toString());
       DATASET.add(user);
     }
   }
