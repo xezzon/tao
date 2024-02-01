@@ -1,4 +1,4 @@
-package io.github.xezzon.tao.rs;
+package io.github.xezzon.tao.trait;
 
 import java.util.Objects;
 import java.util.Optional;

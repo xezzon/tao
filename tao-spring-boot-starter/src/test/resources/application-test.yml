@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:tc:postgresql:15-alpine:///databasename
+    url: jdbc:tc:postgresql:16-alpine:///databasename
   jpa:
     generate-ddl: true
     show-sql: true

@@ -1,4 +1,4 @@
-package io.github.xezzon.tao.rs;
+package io.github.xezzon.tao.trait;
 
 /**
  * 类型转换
