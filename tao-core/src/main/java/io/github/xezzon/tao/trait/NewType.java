@@ -1,4 +1,4 @@
-package io.github.xezzon.tao.rs;
+package io.github.xezzon.tao.trait;
 
 /**
  * 参考 Rust 的 NewType 机制

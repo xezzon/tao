@@ -1,7 +1,7 @@
 package io.github.xezzon.tao.jpa;
 
 import io.github.xezzon.tao.retrieval.CommonQuery;
-import io.github.xezzon.tao.rs.NewType;
+import io.github.xezzon.tao.trait.NewType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;

@@ -3,7 +3,7 @@ package io.github.xezzon.tao.domain;
 /**
  * 参考 Rust 的 NewType 机制
  * @author xezzon
- * @deprecated {@link io.github.xezzon.tao.rs.NewType}
+ * @deprecated {@link io.github.xezzon.tao.trait.NewType}
  */
 @Deprecated(since = "1.0.0")
 public interface NewType<T> {
