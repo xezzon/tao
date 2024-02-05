@@ -33,9 +33,9 @@ class LogicDeleteRepositoryTest {
   @BeforeAll
   void beforeAll() {
     for (int i = 0; i < Byte.MAX_VALUE; i++) {
-      Dict dict = new Dict()
-          .setName(RandomUtil.randomString(6))
-          .setId(IdUtil.getSnowflakeNextIdStr());
+      Dict dict = new Dict();
+      dict.setName(RandomUtil.randomString(6));
+      dict.setId(IdUtil.getSnowflakeNextIdStr());
       DATASET.add(dict);
     }
     repository.saveAll(DATASET);
@@ -55,6 +55,8 @@ class LogicDeleteRepositoryTest {
         dict,
         result.get(0)
     );
+    Assertions.assertNotNull(result.get(0).getCreateTime());
+    Assertions.assertNotNull(result.get(0).getUpdateTime());
   }
 }
 
