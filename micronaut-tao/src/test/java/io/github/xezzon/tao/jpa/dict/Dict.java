@@ -2,6 +2,7 @@ package io.github.xezzon.tao.jpa.dict;
 
 import io.github.xezzon.tao.jpa.BaseEntity;
 import io.github.xezzon.tao.jpa.LogicDeleteEntity;
+import io.github.xezzon.tao.jpa.OptimisticLockEntity;
 import io.micronaut.data.annotation.MappedEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.ToString;
 @Entity
 @MappedEntity
 @Table
-public class Dict extends BaseEntity<String> implements LogicDeleteEntity {
+public class Dict extends BaseEntity<String> implements LogicDeleteEntity, OptimisticLockEntity {
 
   @Serial
   private static final long serialVersionUID = 5254551771226841499L;

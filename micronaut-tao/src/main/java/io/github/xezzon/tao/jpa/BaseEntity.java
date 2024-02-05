@@ -4,8 +4,6 @@ import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.DateUpdated;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Version;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import lombok.Getter;
@@ -20,8 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @MappedSuperclass
-@Deprecated
-public abstract class BaseEntity<ID> implements Serializable {
+public abstract class BaseEntity<ID> implements UpdateTimeEntity {
 
   public static final int ID_LENGTH = 64;
   @java.io.Serial
@@ -38,12 +35,9 @@ public abstract class BaseEntity<ID> implements Serializable {
    */
   @Column(nullable = false)
   @DateUpdated
-  @Version
   protected Instant updateTime;
 
   public abstract ID getId();
-
-  public abstract void setId(ID id);
 
   @Override
   public boolean equals(Object o) {
