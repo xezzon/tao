@@ -6,8 +6,10 @@ import io.github.xezzon.tao.jpa.dict.Dict;
 import io.github.xezzon.tao.jpa.dict.DictDAO;
 import io.github.xezzon.tao.jpa.dict.DictRepository;
 import io.github.xezzon.tao.jpa.dict.QDict;
+import io.micronaut.data.exceptions.OptimisticLockException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -57,6 +59,14 @@ class LogicDeleteRepositoryTest {
     );
     Assertions.assertNotNull(result.get(0).getCreateTime());
     Assertions.assertNotNull(result.get(0).getUpdateTime());
+  }
+
+  @Test
+  void optimisticLock() {
+    Dict dict = DATASET.parallelStream()
+        .findAny().get();
+    dict.setUpdateTime(Instant.now());
+    Assertions.assertThrows(OptimisticLockException.class, () -> dictDAO.get().update(dict));
   }
 }
 
