@@ -87,6 +87,7 @@ public class Tree {
    * @param tree 树型数据
    * @return 顶级节点
    */
+  @Deprecated
   public static <T extends TreeNode<T, ?>> List<T> top(Collection<T> tree) {
     Set<?> ids = tree.parallelStream()
         .map(TreeNode::getId)
@@ -100,6 +101,7 @@ public class Tree {
    * 递归设置下级节点（面向过程写法）
    * @param tree 所有对象（或所有对象的局部）
    */
+  @Deprecated
   public static <T extends TreeNode<T, ?>> void build(
       @NotNull final Collection<T> roots,
       @NotNull final Collection<T> tree
@@ -122,6 +124,7 @@ public class Tree {
    * @param <T> 元素类型
    * @return 树形结构数据集
    */
+  @Deprecated
   public static <T extends TreeNode<T, ?>> List<T> fold(Collection<T> list) {
     List<T> roots = top(list);
     build(roots, list);
@@ -134,6 +137,7 @@ public class Tree {
    * @param <T> 元素类型
    * @return 平铺结构数据集
    */
+  @Deprecated
   public static <T extends TreeNode<T, ?>> List<T> flatten(Collection<T> roots) {
     if (roots.isEmpty()) {
       return Collections.emptyList();
