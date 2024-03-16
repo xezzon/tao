@@ -15,26 +15,27 @@ import org.junit.jupiter.api.Test;
  * @author xezzon
  */
 class TreeTest {
+
   public static final List<Menu> DATA_SET = new ArrayList<>();
 
   @BeforeEach
   void setUp() {
     DATA_SET.clear();
-    DATA_SET.add(new Menu().setId("1").setParentId("0"));
-    DATA_SET.add(new Menu().setId("2").setParentId("0"));
-    DATA_SET.add(new Menu().setId("3").setParentId("0"));
-    DATA_SET.add(new Menu().setId("11").setParentId("1"));
-    DATA_SET.add(new Menu().setId("12").setParentId("1"));
-    DATA_SET.add(new Menu().setId("13").setParentId("1"));
-    DATA_SET.add(new Menu().setId("21").setParentId("2"));
-    DATA_SET.add(new Menu().setId("22").setParentId("2"));
-    DATA_SET.add(new Menu().setId("121").setParentId("11"));
-    DATA_SET.add(new Menu().setId("122").setParentId("11"));
-    DATA_SET.add(new Menu().setId("131").setParentId("13"));
-    DATA_SET.add(new Menu().setId("1211").setParentId("121"));
-    DATA_SET.add(new Menu().setId("1221").setParentId("122"));
-    DATA_SET.add(new Menu().setId("1222").setParentId("122"));
-    DATA_SET.add(new Menu().setId("1311").setParentId("131"));
+    DATA_SET.add(new Menu("1", "0"));
+    DATA_SET.add(new Menu("2", "0"));
+    DATA_SET.add(new Menu("3", "0"));
+    DATA_SET.add(new Menu("11", "1"));
+    DATA_SET.add(new Menu("12", "1"));
+    DATA_SET.add(new Menu("13", "1"));
+    DATA_SET.add(new Menu("21", "2"));
+    DATA_SET.add(new Menu("22", "2"));
+    DATA_SET.add(new Menu("121", "11"));
+    DATA_SET.add(new Menu("122", "11"));
+    DATA_SET.add(new Menu("131", "13"));
+    DATA_SET.add(new Menu("1211", "121"));
+    DATA_SET.add(new Menu("1221", "122"));
+    DATA_SET.add(new Menu("1222", "122"));
+    DATA_SET.add(new Menu("1311", "131"));
   }
 
   static List<Menu> listWithParentId(Collection<String> parentIds) {
@@ -69,38 +70,37 @@ class TreeTest {
   }
 
   @Test
-  void top() {
-    Assertions.assertEquals(3, Tree.top(DATA_SET).size());
-  }
+  void fold_flatten() {
+    TreeList<Menu> menuTree = TreeList.from(DATA_SET);
+    int i = 0;
+    List<Menu> nodes = menuTree.get();
+    while (!nodes.isEmpty()) {
+      List<Menu> children = new ArrayList<>();
+      for (Menu menu : nodes) {
+        Assertions.assertEquals(DATA_SET.get(i), menu);
+        if (menu.getChildren() != null) {
+          children.addAll(menu.getChildren());
+        }
+        i++;
+      }
+      nodes = children;
+    }
 
-  @Test
-  void fold() {
-    List<Menu> menus = Tree.fold(DATA_SET);
-    Assertions.assertEquals(3, menus.size());
-  }
-
-  @Test
-  void flatten() {
-    List<Menu> menusTree = Tree.fold(DATA_SET);
-    List<Menu> menusList = Tree.flatten(menusTree);
-    Assertions.assertEquals(DATA_SET.size(), menusList.size());
-    Assertions.assertTrue(menusList.stream().map(TreeNode::getChildren).allMatch(Objects::isNull));
+    List<Menu> menuList = menuTree.into();
+    Assertions.assertIterableEquals(DATA_SET, menuList);
   }
 }
 
 class Menu implements TreeNode<Menu, String> {
+
   String id;
   String parentId;
   List<Menu> children;
 
-  public Menu setId(String id) {
+  Menu(String id, String parentId) {
+    super();
     this.id = id;
-    return this;
-  }
-
-  public Menu setParentId(String parentId) {
     this.parentId = parentId;
-    return this;
   }
 
   @Override
@@ -124,10 +124,19 @@ class Menu implements TreeNode<Menu, String> {
   }
 
   @Override
-  public String toString() {
-    return "Menu{" + "id='" + id + '\''
-        + ", parentId='" + parentId + '\''
-        + ", children=" + children
-        + '}';
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Menu menu = (Menu) o;
+    return Objects.equals(id, menu.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }
