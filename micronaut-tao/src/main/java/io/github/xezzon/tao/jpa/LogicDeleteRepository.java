@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * @author xezzon
  */
-public interface LogicDeleteRepository<T extends BaseEntity<ID>, ID extends Serializable>
+public interface LogicDeleteRepository<T extends LogicDeleteEntity, ID extends Serializable>
     extends JpaRepository<T, ID> {
 
   /**

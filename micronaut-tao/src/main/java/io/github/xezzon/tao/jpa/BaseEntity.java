@@ -4,9 +4,6 @@ import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.DateUpdated;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Version;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import lombok.Getter;
@@ -21,7 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @MappedSuperclass
-public abstract class BaseEntity<ID> implements Serializable {
+public abstract class BaseEntity<ID> implements UpdateTimeEntity {
 
   public static final int ID_LENGTH = 64;
   @java.io.Serial
@@ -38,26 +35,9 @@ public abstract class BaseEntity<ID> implements Serializable {
    */
   @Column(nullable = false)
   @DateUpdated
-  @Version
   protected Instant updateTime;
-  /**
-   * 逻辑删除标记 删除时间不为空且大于当前时间则认为已删除<br/>
-   * 注意 时间精度至少要到毫秒级
-   */
-  @Column()
-  protected Instant deleteTime;
 
   public abstract ID getId();
-
-  public abstract BaseEntity<ID> setId(ID id);
-
-  @Transient
-  public boolean isDeleted() {
-    if (this.deleteTime == null) {
-      return false;
-    }
-    return !this.deleteTime.isAfter(Instant.now());
-  }
 
   @Override
   public boolean equals(Object o) {
