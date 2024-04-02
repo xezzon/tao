@@ -1,6 +1,6 @@
 package io.github.xezzon.tao.logger;
 
-import io.github.xezzon.tao.util.DesensitizedUtil.MobilePhoneDesensitizer;
+import cn.hutool.core.util.DesensitizedUtil.DesensitizedType;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ class LogService {
   }
 
   @LogRecord("登录: #{#user.username}; #{sayPassword(#user.password)}; mobile: #{#mobilePhone};")
-  public void log(User user, @LogDesensitize(MobilePhoneDesensitizer.class) String mobilePhone) {
+  public void log(User user, @LogDesensitize(DesensitizedType.MOBILE_PHONE) String mobilePhone) {
     log.debug("日志测试");
   }
 

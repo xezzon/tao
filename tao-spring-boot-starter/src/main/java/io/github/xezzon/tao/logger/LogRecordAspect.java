@@ -1,7 +1,7 @@
 package io.github.xezzon.tao.logger;
 
+import cn.hutool.core.util.DesensitizedUtil;
 import io.github.xezzon.tao.exception.BaseException;
-import io.github.xezzon.tao.util.DesensitizedUtil;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.time.Instant;
@@ -50,8 +50,11 @@ public class LogRecordAspect {
       Optional<Annotation> annotation = Arrays.stream(annotations[i]).parallel()
           .filter(o -> LogDesensitize.class.equals(o.annotationType()))
           .findFirst();
-      if (arg instanceof CharSequence c && annotation.isPresent()) {
-        arg = DesensitizedUtil.desensitized(c, (((LogDesensitize) annotation.get())).value());
+      if (arg instanceof CharSequence c
+          && annotation.isPresent()
+          && annotation.get() instanceof LogDesensitize ld
+      ) {
+        arg = DesensitizedUtil.desensitized(c, ld.value());
       }
       // 将参数放入上下文
       evaluationContext.setVariable(parameterName, arg);
