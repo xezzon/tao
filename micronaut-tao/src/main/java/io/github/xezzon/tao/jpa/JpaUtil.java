@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.jpa;
 
-import cn.hutool.core.util.ReflectUtil;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
@@ -29,7 +28,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class JpaUtil {
 
-  public static final BooleanExpression TRUE_EXPRESSION = Expressions.ONE.eq(1);
+  private JpaUtil() {
+    super();
+  }
 
   /**
    * 局部更新语句
@@ -50,35 +51,39 @@ public class JpaUtil {
         .filter(field -> Objects.nonNull(field.getAnnotation(Column.class)))
         .filter(field -> field.getAnnotation(Column.class).updatable())
         .collect(Collectors.toSet());
-    for (Field field : fields) {
-      SimplePath path = Expressions.path(dataObj.getClass(), field.getName());
-      Object value = ReflectUtil.getFieldValue(obj, field.getName());
-      if (field.isAnnotationPresent(DateUpdated.class)) {
-        clause.set(path, current);
+    try {
+      for (Field field : fields) {
+        SimplePath path = Expressions.path(dataObj.getClass(), field.getName());
+        Object value = field.get(obj);
+        if (field.isAnnotationPresent(DateUpdated.class)) {
+          clause.set(path, current);
+        }
+        if (value != null) {
+          clause.set(path, value);
+        }
+        if (field.isAnnotationPresent(Version.class)) {
+          clause.where(path.eq(value));
+        }
       }
-      if (value != null) {
-        clause.set(path, value);
-      }
-      if (field.isAnnotationPresent(Version.class)) {
-        clause.where(path.eq(value));
-      }
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
     }
     return clause;
   }
 
-  public static <T extends EntityPathBase<RT>, RT> BooleanExpression getQueryClause(
+  public static <T extends EntityPathBase<R>, R> BooleanExpression getQueryClause(
       CommonQuery commonQuery,
       T dataObj,
-      Class<RT> clazz
+      Class<R> clazz
   ) {
     ParseTree parseTree = commonQuery.parseFilter();
     if (parseTree == null) {
-      return TRUE_EXPRESSION;
+      return Expressions.TRUE;
     }
     // 筛选
-    CommonQueryFilterJpaVisitor<T, RT> visitor = new CommonQueryFilterJpaVisitor<>(dataObj, clazz);
+    CommonQueryFilterJpaVisitor<T, R> visitor = new CommonQueryFilterJpaVisitor<>(dataObj, clazz);
     return Optional.ofNullable(visitor.visit(parseTree))
-        .orElse(TRUE_EXPRESSION);
+        .orElse(Expressions.TRUE);
   }
 
   public static Pageable getPageable(CommonQuery commonQuery) {

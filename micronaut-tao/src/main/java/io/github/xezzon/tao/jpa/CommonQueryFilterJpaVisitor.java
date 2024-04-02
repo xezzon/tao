@@ -39,16 +39,16 @@ import org.slf4j.LoggerFactory;
 /**
  * 处理 CommonQueryFilter 语法树
  * @param <T> DO类
- * @param <RT> 实体类
+ * @param <R> 实体类
  */
-class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
+class CommonQueryFilterJpaVisitor<T extends EntityPathBase<R>, R>
     extends CommonQueryFilterBaseVisitor<BooleanExpression> {
 
   private static final Logger log = LoggerFactory.getLogger(CommonQueryFilterJpaVisitor.class);
   private final T dataObj;
-  private final Class<RT> clazz;
+  private final Class<R> clazz;
 
-  public CommonQueryFilterJpaVisitor(T dataObj, Class<RT> clazz) {
+  public CommonQueryFilterJpaVisitor(T dataObj, Class<R> clazz) {
     this.dataObj = dataObj;
     this.clazz = clazz;
   }
@@ -80,8 +80,9 @@ class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
       String rawOperator = ctx.OP().getText();
       String rawValue = ctx.VALUE().getText();
       /* 解析字段 */
-      SimpleExpression<?> column =
-          (SimpleExpression<?>) ReflectUtil.getFieldValue(dataObj, rawField);
+      Field declaredField = dataObj.getClass().getDeclaredField(rawField);
+      SimpleExpression<?> column = (SimpleExpression<?>) declaredField.get(dataObj);
+      ReflectUtil.getFieldValue(dataObj.getClass(), rawField);
       if (column == null) {
         throw nonexistentField(ctx.getText());
       }
@@ -108,7 +109,7 @@ class CommonQueryFilterJpaVisitor<T extends EntityPathBase<RT>, RT>
           default -> throw unsupportedOperator(ctx.getText());
         };
       } else if (column instanceof EnumPath f) {
-        Class<Enum> enumClazz = (Class<Enum>) ReflectUtil.getField(this.clazz, rawField).getType();
+        Class<Enum> enumClazz = (Class<Enum>) this.clazz.getField(rawField).getType();
         Set<Enum> values = Arrays.stream(rawValue.split(",")).parallel()
             .map(o -> Enum.valueOf(enumClazz, o))
             .collect(Collectors.toSet());

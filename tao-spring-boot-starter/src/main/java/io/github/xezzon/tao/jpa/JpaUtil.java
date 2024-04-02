@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.jpa;
 
-import cn.hutool.core.util.ReflectUtil;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
@@ -31,7 +30,9 @@ import org.springframework.data.domain.Sort.Order;
  */
 public class JpaUtil {
 
-  public static final BooleanExpression TRUE_EXPRESSION = Expressions.ONE.eq(1);
+  private JpaUtil() {
+    super();
+  }
 
   /**
    * 局部更新语句
@@ -52,37 +53,41 @@ public class JpaUtil {
         .filter(field -> Objects.nonNull(field.getAnnotation(Column.class)))
         .filter(field -> field.getAnnotation(Column.class).updatable())
         .collect(Collectors.toSet());
-    for (Field field : fields) {
-      Object column = ReflectUtil.getFieldValue(dataObj, field.getName());
-      Path path = (Path) column;
-      Object value = ReflectUtil.getFieldValue(obj, field.getName());
-      if (field.isAnnotationPresent(LastModifiedDate.class)) {
-        clause.set(path, current);
+    try {
+      for (Field field : fields) {
+        Object column = field.get(dataObj);
+        Path path = (Path) column;
+        Object value = field.get(obj);
+        if (field.isAnnotationPresent(LastModifiedDate.class)) {
+          clause.set(path, current);
+        }
+        if (value != null) {
+          clause.set(path, value);
+        }
+        SimpleExpression expression = (SimpleExpression) column;
+        if (field.isAnnotationPresent(Version.class)) {
+          clause.where(expression.eq(value));
+        }
       }
-      if (value != null) {
-        clause.set(path, value);
-      }
-      SimpleExpression expression = (SimpleExpression) column;
-      if (field.isAnnotationPresent(Version.class)) {
-        clause.where(expression.eq(value));
-      }
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
     }
     return clause;
   }
 
-  public static <T extends EntityPathBase<RT>, RT> BooleanExpression getQueryClause(
+  public static <T extends EntityPathBase<R>, R> BooleanExpression getQueryClause(
       CommonQuery commonQuery,
       T dataObj,
-      Class<RT> clazz
+      Class<R> clazz
   ) {
     ParseTree parseTree = commonQuery.parseFilter();
     if (parseTree == null) {
-      return TRUE_EXPRESSION;
+      return Expressions.TRUE;
     }
     // 筛选
-    CommonQueryFilterJpaVisitor<T, RT> visitor = new CommonQueryFilterJpaVisitor<>(dataObj, clazz);
+    CommonQueryFilterJpaVisitor<T, R> visitor = new CommonQueryFilterJpaVisitor<>(dataObj, clazz);
     return Optional.ofNullable(visitor.visit(parseTree))
-        .orElse(TRUE_EXPRESSION);
+        .orElse(Expressions.TRUE);
   }
 
   public static Pageable getPageable(CommonQuery commonQuery) {

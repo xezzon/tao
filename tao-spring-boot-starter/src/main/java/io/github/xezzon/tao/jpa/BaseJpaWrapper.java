@@ -1,6 +1,5 @@
 package io.github.xezzon.tao.jpa;
 
-import cn.hutool.core.util.ReflectUtil;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.SimpleExpression;
@@ -29,8 +28,8 @@ public abstract class BaseJpaWrapper<
     >
     implements JpaWrapper<T, M> {
 
-  private final transient M repository;
-  private transient JPAQueryFactory queryFactory;
+  private final M repository;
+  private JPAQueryFactory queryFactory;
 
   protected BaseJpaWrapper(M repository) {
     this.repository = repository;
@@ -74,17 +73,19 @@ public abstract class BaseJpaWrapper<
   @Override
   @Transactional(rollbackFor = {Exception.class})
   public boolean update(T t) {
-    JPAUpdateClause clause =
-        JpaUtil.getUpdateClause(t, getQueryFactory(), this.getQuery());
+    JPAUpdateClause clause = JpaUtil.getUpdateClause(t, getQueryFactory(), this.getQuery());
     Field idField = Arrays.stream(this.getBeanClass().getDeclaredFields())
         .filter(field -> field.isAnnotationPresent(Id.class))
         .findAny()
         .orElseThrow(() -> new AnnotationException("No identifier specified for entity"));
-    SimpleExpression column =
-        (SimpleExpression) ReflectUtil.getFieldValue(this.getQuery(), idField.getName());
-    Object value = ReflectUtil.getFieldValue(t, idField);
-    clause.where(column.eq(value));
-    long affected = clause.execute();
-    return affected > 0;
+    try {
+      SimpleExpression column = (SimpleExpression) idField.get(this.getQuery());
+      Object value = idField.get(t);
+      clause.where(column.eq(value));
+      long affected = clause.execute();
+      return affected > 0;
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

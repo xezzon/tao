@@ -1,6 +1,6 @@
 package io.github.xezzon.tao.logger;
 
-import io.github.xezzon.tao.desensitize.Desensitizer;
+import cn.hutool.core.util.DesensitizedUtil.DesensitizedType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LogDesensitize {
 
-  Class<? extends Desensitizer> value();
+  DesensitizedType value();
 }
