@@ -1,6 +1,7 @@
 package io.github.xezzon.tao.web;
 
 import io.github.xezzon.tao.exception.BaseException;
+import java.util.Objects;
 
 /**
  * @author xezzon
@@ -72,5 +73,21 @@ public class Result<T> {
 
   public T getData() {
     return data;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Result<?> that)) {
+      return false;
+    }
+    return Objects.equals(code, that.code);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(code);
   }
 }
