@@ -1,17 +1,20 @@
 package io.github.xezzon.tao.jpa;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import io.github.xezzon.tao.jpa.user.GenderEnum;
 import io.github.xezzon.tao.jpa.user.User;
 import io.github.xezzon.tao.jpa.user.UserDAO;
-import io.github.xezzon.tao.jpa.user.UserDataset;
+import io.github.xezzon.tao.jpa.user.UserRepository;
 import io.github.xezzon.tao.retrieval.CommonQuery;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +22,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -31,15 +37,59 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @SpringBootTest
 @ActiveProfiles("test")
+@TestInstance(Lifecycle.PER_CLASS)
 class JpaWrapperTest {
+
+  private static final List<User> DATASET = new ArrayList<>();
 
   @Autowired
   private UserDAO userDAO;
+  @Autowired
+  protected UserRepository repository;
+
+  @BeforeAll
+  void beforeAll() {
+    for (int i = 0; i < Byte.MAX_VALUE; i++) {
+      User user = new User();
+      user.setId(IdUtil.getSnowflakeNextIdStr());
+      user.setName(RandomUtil.randomString(6));
+      user.setAge(RandomUtil.randomInt(6, 60));
+      user.setCredit(RandomUtil.randomBigDecimal(new BigDecimal("100.000")));
+      user.setGender(RandomUtil.randomEle(GenderEnum.values()));
+      user.setCreateTime(Instant.EPOCH.plus(
+          RandomUtil.randomLong(365 * 30, 365 * 300),
+          ChronoUnit.DAYS
+      ));
+      user.setDeleteDateTime(RandomUtil.randomBoolean() ?
+          LocalDateTime.of(
+              RandomUtil.randomInt(2000, 2999),
+              RandomUtil.randomInt(1, 11),
+              RandomUtil.randomInt(1, 27),
+              RandomUtil.randomInt(1, 11),
+              RandomUtil.randomInt(1, 59),
+              RandomUtil.randomInt(1, 59)
+          ) : null
+      );
+      user.setDeleted(user.getDeleteDateTime() != null);
+      user.setDeleteDate(
+          user.getDeleteDateTime() == null
+              ? null
+              : user.getDeleteDateTime().toLocalDate()
+      );
+      user.setDeleteTime(
+          user.getDeleteDateTime() == null
+              ? null
+              : user.getDeleteDateTime().toLocalTime()
+      );
+      DATASET.add(user);
+    }
+    repository.saveAll(DATASET);
+  }
 
   @Test
   @Transactional
   void update() {
-    User user = UserDataset.getDataset().parallelStream()
+    User user = DATASET.parallelStream()
         .filter(o -> Objects.nonNull(o.getDeleteDateTime()))
         .filter(o -> !Objects.equals(o.getGender(), GenderEnum.UNKNOWN))
         .findAny().get();
@@ -83,7 +133,7 @@ class JpaWrapperTest {
   @Test
   void query() {
     String condition = "(name LLIKE 'J' OR (age GT 18)) AND (gender IN 'MALE' OR deleteDateTime NULL true)";
-    List<User> excepts = UserDataset.getDataset().parallelStream()
+    List<User> excepts = DATASET.parallelStream()
         .filter(user -> user.getName().startsWith("J") || user.getAge() > 18)
         .filter(user -> Objects.equals(GenderEnum.MALE, user.getGender())
             || user.getDeleteDateTime() == null)
@@ -111,8 +161,8 @@ class JpaWrapperTest {
   @Test
   void query_unpaged() {
     Page<User> users = userDAO.query(new CommonQuery());
-    Assertions.assertEquals(UserDataset.getDataset().size(), users.getTotalElements());
-    Assertions.assertEquals(UserDataset.getDataset().size(), users.getContent().size());
+    Assertions.assertEquals(DATASET.size(), users.getTotalElements());
+    Assertions.assertEquals(DATASET.size(), users.getContent().size());
   }
 
   /**
@@ -131,14 +181,14 @@ class JpaWrapperTest {
   @Test
   void query_string() {
     CommonQuery eqQuery = new CommonQuery();
-    String exceptName = UserDataset.getDataset().parallelStream()
+    String exceptName = DATASET.parallelStream()
         .map(User::getName)
         .findAny()
         .get();
     eqQuery.setFilter(String.format("name EQ '%s'", exceptName));
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.equals(user.getName(), exceptName))
             .count(),
         eqPage.getTotalElements()
@@ -148,13 +198,13 @@ class JpaWrapperTest {
     neQuery.setFilter(String.format("name NE '%s'", exceptName));
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !Objects.equals(user.getName(), exceptName))
             .count(),
         nePage.getTotalElements()
     );
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         eqPage.getTotalElements() + nePage.getTotalElements()
     );
 
@@ -162,13 +212,13 @@ class JpaWrapperTest {
     llikeQuery.setFilter(String.format("name LLIKE '%s'", exceptName.substring(0, 3)));
     Page<User> llikePage = userDAO.query(llikeQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getName().startsWith(exceptName.substring(0, 3)))
             .count(),
         llikePage.getTotalElements()
     );
 
-    Set<String> exceptId = UserDataset.getDataset().parallelStream()
+    Set<String> exceptId = DATASET.parallelStream()
         .limit(10)
         .map(User::getId)
         .collect(Collectors.toSet());
@@ -176,7 +226,7 @@ class JpaWrapperTest {
     inQuery.setFilter(String.format("id IN '%s'", StrUtil.join(",", exceptId)));
     Page<User> inPage = userDAO.query(inQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> exceptId.contains(user.getId()))
             .count(),
         inPage.getTotalElements()
@@ -186,13 +236,13 @@ class JpaWrapperTest {
     outQuery.setFilter(String.format("id OUT '%s'", StrUtil.join(",", exceptId)));
     Page<User> outPage = userDAO.query(outQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !exceptId.contains(user.getId()))
             .count(),
         outPage.getTotalElements()
     );
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         inPage.getTotalElements() + outPage.getTotalElements()
     );
 
@@ -208,7 +258,7 @@ class JpaWrapperTest {
     emptyInQuery2.setFilter(String.format("name IN ',%s, ,'", exceptName));
     Page<User> emptyInPage2 = userDAO.query(emptyInQuery2);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.equals(user.getName(), exceptName))
             .count(),
         emptyInPage2.getTotalElements()
@@ -221,7 +271,7 @@ class JpaWrapperTest {
     inQuery.setFilter("gender IN 'MALE,FEMALE'");
     Page<User> inPage = userDAO.query(inQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Set.of(GenderEnum.MALE, GenderEnum.FEMALE).contains(user.getGender()))
             .count(),
         inPage.getTotalElements()
@@ -231,13 +281,13 @@ class JpaWrapperTest {
     outQuery.setFilter("gender OUT 'MALE,FEMALE'");
     Page<User> outPage = userDAO.query(outQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !Set.of(GenderEnum.MALE, GenderEnum.FEMALE).contains(user.getGender()))
             .count(),
         outPage.getTotalElements()
     );
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         inPage.getTotalElements() + outPage.getTotalElements()
     );
 
@@ -245,7 +295,7 @@ class JpaWrapperTest {
     allQuery.setFilter("gender IN 'MALE,FEMALE,UNKNOWN'");
     Page<User> allPage = userDAO.query(allQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         allPage.getTotalElements()
     );
 
@@ -265,7 +315,7 @@ class JpaWrapperTest {
     eqQuery.setFilter(String.format("age EQ %s", exceptNumber));
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.equals(user.getAge(), 18))
             .count(),
         eqPage.getTotalElements()
@@ -275,13 +325,13 @@ class JpaWrapperTest {
     neQuery.setFilter(String.format("age NE %s", exceptNumber));
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !Objects.equals(user.getAge(), 18))
             .count(),
         nePage.getTotalElements()
     );
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         eqPage.getTotalElements() + nePage.getTotalElements()
     );
 
@@ -289,7 +339,7 @@ class JpaWrapperTest {
     gtQuery.setFilter(String.format("age GT %s", exceptNumber));
     Page<User> gtPage = userDAO.query(gtQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getAge() > 18)
             .count(),
         gtPage.getTotalElements()
@@ -299,7 +349,7 @@ class JpaWrapperTest {
     ltQuery.setFilter(String.format("age LT %s", exceptNumber));
     Page<User> ltPage = userDAO.query(ltQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getAge() < 18)
             .count(),
         ltPage.getTotalElements()
@@ -309,13 +359,13 @@ class JpaWrapperTest {
     geQuery.setFilter(String.format("age GE %s", exceptNumber));
     Page<User> gePage = userDAO.query(geQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getAge() >= 18)
             .count(),
         gePage.getTotalElements()
     );
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         gePage.getTotalElements() + ltPage.getTotalElements()
     );
 
@@ -323,13 +373,13 @@ class JpaWrapperTest {
     leQuery.setFilter(String.format("age LE %s", exceptNumber));
     Page<User> lePage = userDAO.query(leQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getAge() <= 18)
             .count(),
         lePage.getTotalElements()
     );
     Assertions.assertEquals(
-        UserDataset.getDataset().size(),
+        DATASET.size(),
         lePage.getTotalElements() + gtPage.getTotalElements()
     );
   }
@@ -337,7 +387,7 @@ class JpaWrapperTest {
   @Test
   void query_instant() {
     // yyyy-MM-ddTHH:mm:ss
-    Instant exceptDateTime = UserDataset.getDataset().parallelStream()
+    Instant exceptDateTime = DATASET.parallelStream()
         .findAny()
         .get()
         .getCreateTime();
@@ -349,7 +399,7 @@ class JpaWrapperTest {
     ));
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.equals(user.getCreateTime(), exceptDateTime))
             .count(),
         eqPage.getTotalElements()
@@ -362,7 +412,7 @@ class JpaWrapperTest {
     ));
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !Objects.equals(user.getCreateTime(), exceptDateTime))
             .count(),
         nePage.getTotalElements()
@@ -375,7 +425,7 @@ class JpaWrapperTest {
     ));
     Page<User> gtPage = userDAO.query(gtQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getCreateTime().isAfter(exceptDateTime))
             .count(),
         gtPage.getTotalElements()
@@ -387,7 +437,7 @@ class JpaWrapperTest {
     ));
     Page<User> ltPage = userDAO.query(ltQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> user.getCreateTime().isBefore(exceptDateTime))
             .count(),
         ltPage.getTotalElements()
@@ -399,7 +449,7 @@ class JpaWrapperTest {
     ));
     Page<User> gePage = userDAO.query(geQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !user.getCreateTime().isBefore(exceptDateTime))
             .count(),
         gePage.getTotalElements()
@@ -411,7 +461,7 @@ class JpaWrapperTest {
     ));
     Page<User> lePage = userDAO.query(leQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !user.getCreateTime().isAfter(exceptDateTime))
             .count(),
         lePage.getTotalElements()
@@ -421,7 +471,7 @@ class JpaWrapperTest {
   @Test
   void query_datetime() {
     // yyyy-MM-ddTHH:mm:ss
-    LocalDateTime exceptDateTime = UserDataset.getDataset().parallelStream()
+    LocalDateTime exceptDateTime = DATASET.parallelStream()
         .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
         .findAny()
         .get().getDeleteDateTime();
@@ -433,7 +483,7 @@ class JpaWrapperTest {
     ));
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
             .filter(user -> Objects.equals(user.getDeleteDateTime(), exceptDateTime))
             .count(),
@@ -447,7 +497,7 @@ class JpaWrapperTest {
     ));
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
             .filter(user -> !Objects.equals(user.getDeleteDateTime(), exceptDateTime))
             .count(),
@@ -461,7 +511,7 @@ class JpaWrapperTest {
     ));
     Page<User> gtPage = userDAO.query(gtQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
             .filter(user -> user.getDeleteDateTime().isAfter(exceptDateTime))
             .count(),
@@ -474,7 +524,7 @@ class JpaWrapperTest {
     ));
     Page<User> ltPage = userDAO.query(ltQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
             .filter(user -> user.getDeleteDateTime().isBefore(exceptDateTime))
             .count(),
@@ -487,7 +537,7 @@ class JpaWrapperTest {
     ));
     Page<User> gePage = userDAO.query(geQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
             .filter(user -> !user.getDeleteDateTime().isBefore(exceptDateTime))
             .count(),
@@ -500,7 +550,7 @@ class JpaWrapperTest {
     ));
     Page<User> lePage = userDAO.query(leQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDateTime()))
             .filter(user -> !user.getDeleteDateTime().isAfter(exceptDateTime))
             .count(),
@@ -511,7 +561,7 @@ class JpaWrapperTest {
   @Test
   void query_date() {
     // yyyy-MM-dd
-    LocalDate exceptDate = UserDataset.getDataset().parallelStream()
+    LocalDate exceptDate = DATASET.parallelStream()
         .filter(user -> Objects.nonNull(user.getDeleteDate()))
         .findAny()
         .get().getDeleteDate();
@@ -523,7 +573,7 @@ class JpaWrapperTest {
     ));
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDate()))
             .filter(user -> Objects.equals(user.getDeleteDate(), exceptDate))
             .count(),
@@ -537,7 +587,7 @@ class JpaWrapperTest {
     ));
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDate()))
             .filter(user -> !Objects.equals(user.getDeleteDate(), exceptDate))
             .count(),
@@ -551,7 +601,7 @@ class JpaWrapperTest {
     ));
     Page<User> gtPage = userDAO.query(gtQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDate()))
             .filter(user -> user.getDeleteDate().isAfter(exceptDate))
             .count(),
@@ -564,7 +614,7 @@ class JpaWrapperTest {
     ));
     Page<User> ltPage = userDAO.query(ltQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDate()))
             .filter(user -> user.getDeleteDate().isBefore(exceptDate))
             .count(),
@@ -577,7 +627,7 @@ class JpaWrapperTest {
     ));
     Page<User> gePage = userDAO.query(geQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDate()))
             .filter(user -> !user.getDeleteDate().isBefore(exceptDate))
             .count(),
@@ -590,7 +640,7 @@ class JpaWrapperTest {
     ));
     Page<User> lePage = userDAO.query(leQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteDate()))
             .filter(user -> !user.getDeleteDate().isAfter(exceptDate))
             .count(),
@@ -601,7 +651,7 @@ class JpaWrapperTest {
   @Test
   void query_time() {
     // HH:mm:ss
-    LocalTime exceptTime = UserDataset.getDataset().parallelStream()
+    LocalTime exceptTime = DATASET.parallelStream()
         .filter(user -> Objects.nonNull(user.getDeleteTime()))
         .findAny()
         .get().getDeleteTime();
@@ -613,7 +663,7 @@ class JpaWrapperTest {
     ));
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteTime()))
             .filter(user -> Objects.equals(user.getDeleteTime(), exceptTime))
             .count(),
@@ -627,7 +677,7 @@ class JpaWrapperTest {
     ));
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteTime()))
             .filter(user -> !Objects.equals(user.getDeleteTime(), exceptTime))
             .count(),
@@ -641,7 +691,7 @@ class JpaWrapperTest {
     ));
     Page<User> gtPage = userDAO.query(gtQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteTime()))
             .filter(user -> user.getDeleteTime().isAfter(exceptTime))
             .count(),
@@ -654,7 +704,7 @@ class JpaWrapperTest {
     ));
     Page<User> ltPage = userDAO.query(ltQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteTime()))
             .filter(user -> user.getDeleteTime().isBefore(exceptTime))
             .count(),
@@ -667,7 +717,7 @@ class JpaWrapperTest {
     ));
     Page<User> gePage = userDAO.query(geQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteTime()))
             .filter(user -> !user.getDeleteTime().isBefore(exceptTime))
             .count(),
@@ -680,7 +730,7 @@ class JpaWrapperTest {
     ));
     Page<User> lePage = userDAO.query(leQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.nonNull(user.getDeleteTime()))
             .filter(user -> !user.getDeleteTime().isAfter(exceptTime))
             .count(),
@@ -694,7 +744,7 @@ class JpaWrapperTest {
     eqQuery.setFilter("deleted EQ true");
     Page<User> eqPage = userDAO.query(eqQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> Objects.equals(user.getDeleted(), true))
             .count(),
         eqPage.getTotalElements()
@@ -704,7 +754,7 @@ class JpaWrapperTest {
     neQuery.setFilter("deleted NE false");
     Page<User> nePage = userDAO.query(neQuery);
     Assertions.assertEquals(
-        UserDataset.getDataset().parallelStream()
+        DATASET.parallelStream()
             .filter(user -> !Objects.equals(user.getDeleted(), false))
             .count(),
         nePage.getTotalElements()

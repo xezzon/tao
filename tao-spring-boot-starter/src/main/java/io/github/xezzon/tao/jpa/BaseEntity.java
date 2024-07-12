@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Accessors(chain = true)
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
+@Deprecated
 public abstract class BaseEntity<ID> implements Serializable {
 
   public static final int ID_LENGTH = 64;

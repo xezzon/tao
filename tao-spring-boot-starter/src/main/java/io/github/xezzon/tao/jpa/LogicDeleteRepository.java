@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author xezzon
  */
 @NoRepositoryBean
-public interface LogicDeleteRepository<T extends BaseEntity<ID>, ID extends Serializable>
+public interface LogicDeleteRepository<T extends LogicDeleteEntity, ID extends Serializable>
     extends JpaRepository<T, ID> {
 
   /**
