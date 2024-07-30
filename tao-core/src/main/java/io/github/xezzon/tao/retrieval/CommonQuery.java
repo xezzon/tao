@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @author xezzon
  * @see <a href="https://github.com/microsoft/api-guidelines">Microsoft REST API Guidelines</a>
  */
+@Deprecated
 public class CommonQuery {
 
   /**
